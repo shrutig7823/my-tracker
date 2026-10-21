@@ -1,0 +1,1184 @@
+<title>PM Growth OS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: fixed left rail on desktop, sticky top tab strip on phones; one working column of ruled sections, no card walls. */
+:root{
+  --bg:#EEF1F4; --surface:#FFFFFF; --ink:#13202C; --muted:#5B6B7A; --line:#D5DCE3;
+  --accent:#2457C5; --accent-soft:#E3EBFB; --accent-ink:#FFFFFF;
+  --ok:#1F7A4D; --ok-soft:#DDF1E6; --warn:#9A5A08; --warn-soft:#F8EBD3; --bad:#B3372B; --bad-soft:#F7E0DD;
+  --t1:#2457C5; --t2:#7A3FC2; --t3:#1F7A4D; --t4:#B26A00; --t5:#0E7C86; --t6:#B93C75;
+  --font-ui:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-data:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F161D; --surface:#16202A; --ink:#E6EDF3; --muted:#8FA1B1; --line:#263543;
+  --accent:#7BA3FF; --accent-soft:#1A2B4A; --accent-ink:#0B1220;
+  --ok:#4CC38A; --ok-soft:#14301F; --warn:#E0A04A; --warn-soft:#33260F; --bad:#F0786B; --bad-soft:#3A1B18; --t1:#7BA3FF; --t2:#B896F0; --t3:#4CC38A; --t4:#E0A04A; --t5:#4FC3CB; --t6:#F08BB4; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F161D; --surface:#16202A; --ink:#E6EDF3; --muted:#8FA1B1; --line:#263543;
+  --accent:#7BA3FF; --accent-soft:#1A2B4A; --accent-ink:#0B1220;
+  --ok:#4CC38A; --ok-soft:#14301F; --warn:#E0A04A; --warn-soft:#33260F; --bad:#F0786B; --bad-soft:#3A1B18; --t1:#7BA3FF; --t2:#B896F0; --t3:#4CC38A; --t4:#E0A04A; --t5:#4FC3CB; --t6:#F08BB4; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.rail{position:sticky;top:0;align-self:start;height:100vh;padding:24px 16px 20px max(16px,env(safe-area-inset-left,0px));border-right:1px solid var(--line);display:flex;flex-direction:column;gap:20px;background:var(--surface)}
+.brand b{display:block;font-size:17px;letter-spacing:-.01em}
+.brand span{font-family:var(--font-data);font-size:11px;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a,.nav button{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;font:inherit;padding:8px 10px;border-radius:6px;color:var(--muted);text-decoration:none;font-weight:500}
+.nav a:hover,.nav button:hover{color:var(--ink);background:var(--bg)}
+.nav a[aria-current="page"],.nav button[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+.rail .foot{margin-top:auto;font-family:var(--font-data);font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+main{min-width:0;padding:28px max(16px,env(safe-area-inset-right,0px)) 80px 32px;max-width:980px}
+h1{font-size:26px;letter-spacing:-.02em;margin:0 0 4px;text-wrap:balance}
+h2{font-size:18px;margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
+h3{font-size:14px;margin:0;font-weight:600}
+.lede{color:var(--muted);margin:0 0 22px;max-width:65ch}
+.eyebrow{font-family:var(--font-data);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sec{border-top:1px solid var(--line);padding:18px 0;display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.row.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.muted{color:var(--muted)} .small{font-size:13px} .mono{font-family:var(--font-data);font-size:12px}
+.btn{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=text],input[type=date],select,textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:8px 10px;min-width:0}
+textarea{resize:vertical;min-height:72px;line-height:1.45}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex:none}
+label.lab{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:500}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;background:var(--bg);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.pill.bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.pill.acc{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%;background:var(--accent)}
+.bar i.s1{background:var(--muted)} .bar i.s2{background:var(--warn)} .bar i.s3{background:var(--accent)} .bar i.s4{background:var(--ok)}
+.num{font-variant-numeric:tabular-nums;font-family:var(--font-data)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.list{display:flex;flex-direction:column}
+.item{border-top:1px solid var(--line);padding:14px 0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.item:first-child{border-top:0}
+.track{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start}
+.notice{padding:10px 12px;border-radius:6px;background:var(--warn-soft);color:var(--warn);font-size:13px}
+.notice.err{background:var(--bad-soft);color:var(--bad)}
+.quote{border-left:3px solid var(--accent);padding:2px 0 2px 12px;white-space:pre-wrap}
+.scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.score{border:1px solid var(--line);border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.score b{font-size:20px;font-family:var(--font-data)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;cursor:pointer;font-size:13px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.nav button{display:flex;align-items:center;gap:10px}
+.nav svg{flex:none}
+.nav .nb{margin-left:auto;font-family:var(--font-data);font-size:11px;padding:1px 7px;border-radius:99px;background:var(--bg);color:var(--muted)}
+.nav button[aria-current="page"] .nb{background:var(--surface);color:var(--accent)}
+.nav .grp{display:flex;flex-direction:column;gap:2px}
+.nav .ng{font-family:var(--font-data);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:14px 10px 4px}
+.nav{gap:0}
+@media (max-width:820px){.nav .grp{flex-direction:row}.nav .ng{display:none}.nav .nb{margin-left:4px}}
+.scroll-x{overflow-x:auto}
+.ivcards{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.ivcard{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;cursor:pointer;text-align:left;flex:none;min-width:180px}
+.ivcard:hover{border-color:var(--accent)}
+.ivcard.sel{border:2px solid var(--accent);background:var(--accent-soft);padding:9px 13px}
+.ivcard.add{border-style:dashed;background:transparent;min-width:150px}
+.ivt{display:flex;flex-direction:column;min-width:0}
+.ava{width:38px;height:38px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;color:var(--surface);flex:none;background:var(--ink)}
+.ava.big{width:52px;height:52px;font-size:24px;border-radius:10px}
+.ava.t1{background:var(--t1)}.ava.t2{background:var(--t2)}.ava.t3{background:var(--t3)}.ava.t4{background:var(--t4)}.ava.t5{background:var(--t5)}.ava.t6{background:var(--t6)}
+.ava.plus{background:var(--bg);color:var(--muted);border:1px solid var(--line);font-weight:400;font-size:22px}
+.ivmain{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.sumrow{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+.sumbox.main{flex-direction:row;flex-wrap:wrap;gap:18px}
+.rb{display:flex;flex-direction:column;gap:8px;min-width:150px}
+.ob{flex:1 1 240px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.sumbox{background:var(--bg);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.sumbox.key{background:var(--accent-soft)}
+.sumbox.key .eyebrow{color:var(--accent)}
+.bignum{font-size:34px;line-height:1;font-family:var(--font-data);font-weight:500}
+.stars{display:inline-flex;gap:2px}
+.star{background:none;border:0;padding:2px;font-size:22px;line-height:1;cursor:pointer;color:var(--line)}
+.star.on{color:var(--t4)}
+.qgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,1.2fr);gap:16px;align-items:start}
+.qhead{background:var(--bg);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--muted)}
+.qrow{padding:14px;border-bottom:1px solid var(--line)}
+.qcell{display:flex;gap:12px;min-width:0}
+.qn{width:28px;height:28px;border-radius:50%;background:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex:none;font-family:var(--font-data)}
+.mlabel{display:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.acell,.fcell{min-width:0;font-size:14px}
+.fcell{border-radius:10px;padding:12px}
+.fcell.v0{background:var(--bg)}.fcell.v1{background:var(--ok-soft)}.fcell.v2{background:var(--warn-soft)}
+.fbrow{display:flex;gap:10px;align-items:flex-start}
+.vi{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none;color:var(--surface);background:var(--muted)}
+.fcell.v1 .vi{background:var(--ok)}.fcell.v2 .vi{background:var(--warn)}
+.imp{margin-top:8px;font-size:13px;color:var(--muted)}
+ul.blist{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+@media (max-width:1060px){.qgrid{grid-template-columns:minmax(0,1fr);gap:10px}.qhead{display:none}.mlabel{display:block}}
+@media (max-width:820px){.sumrow{grid-template-columns:minmax(0,1fr)}.ivmain{padding:14px}}
+.split{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:24px;align-items:start}
+.daywrap{display:flex;flex-direction:column;gap:14px;min-width:0}
+.calwrap{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;position:sticky;top:12px}
+.calhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cw{text-align:center;font-size:11px;font-weight:600;color:var(--muted);padding-bottom:2px}
+.day{border:1px solid transparent;background:var(--bg);border-radius:8px;padding:5px 2px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.day:hover{border-color:var(--accent)}
+.day .dn{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.day.l1{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+.day.l2{background:color-mix(in srgb,var(--accent) 20%,var(--surface))}
+.day.l3{background:color-mix(in srgb,var(--accent) 34%,var(--surface))}
+.day.fut{opacity:.45}
+.day.now .dn{color:var(--accent)}
+.day.now{border-color:var(--accent)}
+.day.sel{outline:2px solid var(--ink);outline-offset:1px}
+.dots{display:grid;grid-template-columns:repeat(3,7px);gap:2px}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;border:1px solid var(--line);background:transparent}
+.dot.on{border-color:transparent}
+.dot.on.t1{background:var(--t1)}.dot.on.t2{background:var(--t2)}.dot.on.t3{background:var(--t3)}.dot.on.t4{background:var(--t4)}.dot.on.t5{background:var(--t5)}.dot.on.t6{background:var(--t6)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:12px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend .dot{width:9px;height:9px}
+.badge.t5{background:var(--t5)}.badge.t6{background:var(--t6)}
+.panel.task.t5{border-top-color:var(--t5)}.panel.task.t6{border-top-color:var(--t6)}
+.chip{white-space:nowrap}
+@media (max-width:820px){.split{grid-template-columns:minmax(0,1fr)}.calwrap{position:static}}
+@media (max-width:400px){.dots{grid-template-columns:repeat(3,5px);gap:2px}.dot{width:5px;height:5px}.legend .dot{width:9px;height:9px}.calwrap{padding:10px}.cal{gap:3px}}
+.badge{display:inline-block;padding:2px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--surface)}
+.badge.t1{background:var(--t1)}.badge.t2{background:var(--t2)}.badge.t3{background:var(--t3)}.badge.t4{background:var(--t4)}
+.panel.task{border-top:4px solid var(--line)}
+.panel.task.t1{border-top-color:var(--t1)}.panel.task.t2{border-top-color:var(--t2)}.panel.task.t3{border-top-color:var(--t3)}.panel.task.t4{border-top-color:var(--t4)}
+.panel.hero{background:var(--accent-soft);border-color:transparent}
+ol.next{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+ol.next li{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.linkbtn{background:none;border:0;padding:0;color:var(--ink);text-align:left;cursor:pointer;font-weight:600;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.linkbtn:hover{text-decoration-color:var(--accent)}
+.item.isnext{background:var(--accent-soft);margin:0 -10px;padding:14px 10px;border-radius:6px;border-top-color:transparent}
+.bar i.s3{background:var(--t3)}
+.bar i.s4{background:var(--ok)}.bar i.s5{background:var(--ok)}
+details>summary{cursor:pointer;color:var(--muted);font-size:13px}
+pre.wrap{white-space:pre-wrap;font-family:var(--font-ui);margin:0}
+@media (max-width:820px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;height:auto;flex-direction:row;align-items:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));border-right:0;border-bottom:1px solid var(--line);gap:12px;overflow:hidden}
+  .brand span,.rail .foot{display:none}
+  .nav{flex-direction:row;overflow-x:auto;gap:2px}
+  .nav a,.nav button{white-space:nowrap;padding:7px 10px;width:auto}
+  main{padding:20px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
+  .grid2,.grid3{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:no-preference){.btn{transition:border-color .12s}}
+</style>
+
+<div class="app">
+  <aside class="rail">
+    <div class="brand"><b>PM Growth OS</b><span id="wk"></span></div>
+    <nav class="nav" id="nav" aria-label="Sections"></nav>
+    <div class="foot"><span id="savestate">Loading…</span></div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- static content (from the plan) ---------- */
+
+const FEEDBACK=[
+ {id:"empathy",name:"User empathy",gap:"I sometimes solve from my own lens instead of the user's.",win:"Describe the problem in the user's language before using PM terms.",habit:"User, context, goal, pain, existing workaround, evidence.",tab:"tracker"},
+ {id:"structure",name:"Structure",gap:"My answers can become scattered.",win:"The listener always knows the problem, the user, why it matters most, and what happens first.",habit:"Objective, user, problem, evidence, priority, hypothesis, solution, MVP, metrics, trade-offs, used internally.",tab:"practice"},
+ {id:"depth",name:"Product depth",gap:"I sometimes stop at first-order answers.",win:"Survive five consecutive why / what-happens-if follow-ups on any feature.",habit:"For each idea: alternative rejected, what breaks, trade-off, what would change my mind, what V1 excludes.",tab:"practice"},
+ {id:"tech",name:"Technical product knowledge",gap:"I need to understand APIs, backend, caching, events, databases and what happens beneath the UI.",win:"For any feature, explain the API, data sent, where state lives, which service decides, what fails, what is logged.",habit:"UI action, API call, service, database or state, event, response, failure handling, analytics.",tab:"learn",sub:"skills"},
+ {id:"rehearsed",name:"Less rehearsed thinking",gap:"Framework-led answers can sound robotic.",win:"Sound like reasoning live from evidence, not reciting a template.",habit:"Name the real fork in the problem first (for example discovery vs repeat value), then reason through it.",tab:"practice"},
+ {id:"firstclub",name:"FirstClub product knowledge",gap:"I work here, so I should know the product deeply.",win:"Answer FirstClub cases without spending half the answer rediscovering the product.",habit:"Keep a written knowledge base for every surface.",tab:"learn",sub:"firstclub"},
+ {id:"building",name:"Hands-on building",gap:"I need to build and deploy real products.",win:"Every week produces a commit I can explain: request, response, failure handling, persistence.",habit:"Work on a real repo from day 1.",tab:"app"}
+];
+const LEVELS=["Gap","Improving","Showing evidence","Consistent"];
+const STAGES=["Not started","Learning","Used with guidance","Built independently","Can debug","Can explain in interview"];
+
+const WEEKS=[
+ {pm:["Behavioral segmentation","Jobs to be done","Observation vs assumption","Better user interview questions"],tech:["HTTP","REST and GET / POST / PUT / DELETE","JSON","Status codes","Postman"],build:"Create the first API repo with GET and POST endpoints and test them in Postman.",out:"1 user teardown + 1 working API repo"},
+ {pm:["Problem framing","Prioritization","Hypotheses","MVP"],tech:["SQL","Relational databases","Schemas","Keys","CRUD"],build:"Connect the API to a database. Create, read and update records.",out:"One end-to-end CRUD flow"},
+ {pm:["Trade-offs","Guardrails","Edge cases","Experiment design"],tech:["Event tracking","Event properties","Client vs server events","Webhooks"],build:"Instrument events in your project.",out:"Tracking plan + working event flow"},
+ {pm:["Reverse-engineer a FirstClub flow"],tech:["Authentication","Sessions","Tokens","State","Service ownership"],build:"Add login, session or user-state handling.",out:"Architecture diagrams for Homepage, Referral, Cart"},
+ {pm:["Product trade-offs under constraints"],tech:["Caching","Queues","Retries","Idempotency","Latency"],build:"Add one reliability mechanism.",out:"Explain one failure scenario end to end"},
+ {pm:["AI use-case selection","User trust","Quality metrics"],tech:["LLMs","Embeddings","RAG","Vector DB","Agents","Hallucination and evaluation"],build:"Add a real AI capability to a project.",out:"Working AI feature + evaluation approach"},
+ {pm:["Revisit your weakest feedback gap"],tech:["Git / GitHub","Docker basics","Deployment","Logs","Monitoring","CI/CD basics"],build:"Deploy one project publicly with a clean README, architecture diagram and demo.",out:"1 deployed project you can defend"},
+ {pm:["3 product design mocks","2 RCA mocks","2 technical-product mocks","1 FirstClub-specific mock"],tech:["Re-run your weakest technical concept"],build:"Fix the gaps your mocks exposed.",out:"December re-round readiness report"}
+];
+const DOW=[
+ ["Sunday","Review","Write the weekly review below: what you learned, where you were shallow, what you can defend, what to show the mentor."],
+ ["Monday","User problem","Interview or observe a user, or analyze one problem deeply."],
+ ["Tuesday","Product structure","Solve one PM case with a strict prioritization decision."],
+ ["Wednesday","Technical teardown","Reverse-engineer one real feature."],
+ ["Thursday","Build","Push a meaningful repo improvement and explain it."],
+ ["Friday","Metrics and experimentation","Define instrumentation, one experiment and its guardrails."],
+ ["Saturday","Mock interview","Run one full case in Case coach with aggressive follow-ups."]
+];
+
+const SURFACES=[
+ {id:"homepage",name:"Homepage",act:"Open the app and let the homepage load"},
+ {id:"search",name:"Search",act:"Type a query and see results"},
+ {id:"pdp",name:"Product page",act:"Open a product page"},
+ {id:"cart",name:"Cart",act:"Tap Add to Cart"},
+ {id:"checkout",name:"Checkout",act:"Tap Place Order"},
+ {id:"referral",name:"Referral",act:"Share a referral code and have a friend redeem it"},
+ {id:"wallet",name:"Wallet",act:"Pay with wallet balance"},
+ {id:"finds",name:"Finds",act:"Open Finds and scroll"},
+ {id:"gifts",name:"Gifts",act:"Redeem a referral gift"},
+ {id:"tracking",name:"Order tracking",act:"Open order tracking after placing an order"}
+];
+const SFIELDS=[["user","User"],["jtbd","Job to be done"],["flow","Flow"],["pain","Pain"],["evidence","Evidence"],["constraint","Business constraint"],["arch","Architecture"],["events","Events"],["metrics","Metrics"],["ideas","Improvement ideas"],["keep","One thing I would not change"]];
+
+const SKILLS=[
+ ["web","HTML / CSS / JavaScript","The page structure, styling and behavior users see"],
+ ["fw","Frontend framework","Components, props and routing in your UI"],
+ ["fstate","Frontend state","What the screen remembers while a user acts, plus loading and error states"],
+ ["bfw","Backend framework","Routes, controllers and services that handle requests"],
+ ["rest","REST APIs","Endpoints, methods, status codes and request and response bodies"],
+ ["db","Database","Where your app's data lives and how it is read and written"],
+ ["sql","SQL","Queries, joins and indexes on your tables"],
+ ["auth","Authentication","How a user proves who they are and what they may access"],
+ ["git","Git","Commits, branches and pull requests on your repo"],
+ ["deploy","Deployment","Environment variables, hosting, build and release"],
+ ["log","Logging","What the server records when something fails"],
+ ["test","Testing","Unit and integration tests for your core flow"],
+ ["cache","Caching","Data your app can safely reuse instead of fetching again"],
+ ["queue","Queues and background jobs","Work that should happen after the user's request returns"],
+ ["retry","Retries","What happens when a call to another service fails"],
+ ["idem","Idempotency","Making sure a repeated request does not do the thing twice"],
+ ["mon","Monitoring","How you find out the app is failing or slow"],
+ ["sysdes","System design","Drawing your app and what fails at each layer"],
+ ["events","Events","What your app records when a user acts"],
+ ["funnels","Funnels","Where users drop off across steps of your core flow"],
+ ["instr","Instrumentation","Event names, properties and identifiers in your code"],
+ ["exp","Experimentation","Testing one change against a metric"],
+ ["llm","LLM APIs","Only if your app needs it: a model call with input and output"],
+ ["prompt","Prompts","Only if your app needs it: instructions and context you send"],
+ ["struct","Structured outputs","Only if your app needs it: getting data back in a fixed shape"],
+ ["emb","Embeddings","Only if your app needs it: turning text into vectors"],
+ ["vec","Vector DB","Only if your app needs it: storing and searching vectors"],
+ ["rag","RAG","Only if search or a query is not enough: retrieval then answer"],
+ ["agent","Agents","Only if a fixed workflow is not enough: tool use in a loop"],
+ ["evals","Evals","Only if your app has an AI feature: measuring its quality"],
+ ["guard","Guardrails","Only if your app has an AI feature: limiting bad outputs"]
+];
+
+const PROJECTS=[
+ {id:"app",name:"My app",scope:"The independent product you are building and deploying to solve a real user problem.",learn:"Frontend, backend, APIs, database, deployment, analytics"}
+];
+const PITEMS=[["repo","Repo"],["arch","Architecture"],["api","API endpoints"],["schema","DB schema"],["event","Event schema"],["fail","Failure states"],["test","Testing"],["deploy","Deployment"],["readme","README"],["demo","Demo"],["concepts","Concepts learned"]];
+
+const DIMS=[["empathy","User empathy"],["structure","Structure"],["prioritization","Prioritization"],["depth","Product depth"],["technical","Technical depth"],["metrics","Metrics"],["tradeoffs","Trade-offs"]];
+const CASE_TYPES=["Product design","RCA of a metric drop","Technical product","FirstClub-specific"];
+const TECH_Q=["What API is called?","What service owns this logic?","Where is the state stored?","What events fire?","What can fail?","How would you handle retries?","What needs caching?","What would you log?","How would you measure latency?"];
+const FC_CONTEXT="FirstClub is an Indian quick-commerce app operating in cities such as Bengaluru and Hyderabad. Surfaces: homepage, search, product page, cart, checkout, referral (referrer and referee, codes, rewards), wallet, gifts, Finds, order tracking, ratings, CRM messages.";
+
+/* ---------- daily tracker ---------- */
+const CORE={product:["empathy","structure"],tech:["tech"],build:["building"],ui:["tech","firstclub"]};
+const HAB=[["read","Read the book","t3"],["app","Build the app","t1"],["web","Backend and frontend","t2"],["ai","AI and ML","t4"],["prac","Practice questions","t5"],["emp","User empathy","t6"]];
+const PRAC=[["rca","RCA"],["design","Product design"],["guess","Guesstimates"],["improve","Product improvement"]];
+const EMP=["Talked to a real user","Watched someone use an app","Read user reviews or complaints","Wrote a user's problem in their words","Observed a friend or colleague","Something else"];
+const LEARN={
+ web:{title:"Backend and frontend",hint:"A video, a tutorial or a chapter. Write what it was.",chips:["HTML and CSS","JavaScript basics","React components and state","APIs and fetch","Routes and controllers","Databases and SQL","Authentication","Deployment"]},
+ ai:{title:"AI and ML",hint:"A video, a course session or an article. Write what it was.",chips:["Supervised vs unsupervised","LLMs and prompting","Embeddings","RAG","Agents","Evals","MLOps","Clustering and trees"]}
+};
+function pagesOn(d){return +((S.track.pages||{})[d])||0}
+function sumPages(){return Object.values(S.track.pages||{}).reduce((a,n)=>a+(+n||0),0)}
+function learnOn(d,k){return ((((S.track.learn||{})[d])||{})[k])||[]}
+function pracOn(d,k){return +((((S.track.prac||{})[d])||{})[k])||0}
+function empOn(d){return ((S.track.emp||{})[d])||{}}
+function tDone(d,id){
+  const T=S.track;
+  if(id==="read")return pagesOn(d)>0;
+  if(id==="app")return (T.steps||[]).some(s=>s.done&&s.doneOn===d)||!!((T.appWorked||{})[d]);
+  if(id==="web"||id==="ai")return learnOn(d,id).length>0;
+  if(id==="prac")return PRAC.some(p=>pracOn(d,p[0])>0);
+  if(id==="emp")return !!empOn(d).type;
+  return false;
+}
+function tCount(d){return HAB.filter(h=>tDone(d,h[0])).length}
+function hPct(d){return Math.round(tCount(d)/HAB.length*100)}
+function mon(date){return addDays(date,-((parseD(date).getDay()+6)%7))}
+function dstr(ts){const d=new Date(ts);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function tStreak(id){let d=today();if(!tDone(d,id))d=addDays(d,-1);let n=0;while(tDone(d,id)&&n<400){n++;d=addDays(d,-1)}return n}
+function tMonth(id){const t=today(),p=t.slice(0,8);let n=0;for(let i=1;i<=+t.slice(8);i++){if(tDone(p+String(i).padStart(2,"0"),id))n++}return n}
+function svgText(x,y,t,anchor,extra){return '<text x="'+x+'" y="'+y+'" text-anchor="'+(anchor||"middle")+'" font-size="11" fill="var(--muted)" font-family="var(--font-data)"'+(extra||"")+'>'+t+'</text>'}
+function chartDaily(){
+  const t=today(),y=+t.slice(0,4),m=+t.slice(5,7),nd=new Date(y,m,0).getDate(),td=+t.slice(8);
+  const W=640,H=170,pl=36,pr=14,pt=14,pb=24;
+  const X=i=>pl+(nd>1?i/(nd-1):0)*(W-pl-pr),Y=p=>pt+(1-p/100)*(H-pt-pb);
+  const pts=[];for(let i=1;i<=td;i++){const v=hPct(t.slice(0,8)+String(i).padStart(2,"0"));pts.push([X(i-1),Y(v),v])}
+  let s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Daily completion this month">';
+  [0,50,100].forEach(v=>{s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="var(--line)" stroke-width="1"/>'+svgText(pl-6,Y(v)+4,v+"%","end")});
+  [1,8,15,22,29].filter(d=>d<=nd).forEach(d=>{s+=svgText(X(d-1),H-6,d)});
+  if(pts.length>1){
+    s+='<path d="M'+pts[0][0]+' '+Y(0)+' L'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(" L")+' L'+pts[pts.length-1][0]+' '+Y(0)+' Z" fill="var(--accent-soft)"/>'
+      +'<path d="M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(" L")+'" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>';
+  }
+  const last=pts[pts.length-1];
+  s+='<circle cx="'+last[0]+'" cy="'+last[1]+'" r="4.5" fill="var(--accent)"/>'+svgText(Math.min(last[0],W-pr-10),Math.max(last[1]-10,pt+8),last[2]+"%","middle",' style="fill:var(--ink)"');
+  return s+'</svg>';
+}
+function chartWeekly(){
+  const t=today(),W=640,H=170,pl=36,pr=14,pt=18,pb=24;const mons=[];for(let i=4;i>=0;i--)mons.push(addDays(mon(t),-7*i));
+  const vals=mons.map(m=>{let sum=0,n=0;for(let i=0;i<7;i++){const d=addDays(m,i);if(d<=t){sum+=hPct(d);n++}}return n?Math.round(sum/n):0});
+  const Y=p=>pt+(1-p/100)*(H-pt-pb),band=(W-pl-pr)/mons.length,bw=Math.min(54,band*.6);
+  let s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Weekly completion, last five weeks">';
+  [0,50,100].forEach(v=>{s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="var(--line)" stroke-width="1"/>'+svgText(pl-6,Y(v)+4,v+"%","end")});
+  mons.forEach((m,i)=>{const cx=pl+band*i+band/2,y=Y(vals[i]);
+    s+='<rect x="'+(cx-bw/2)+'" y="'+y+'" width="'+bw+'" height="'+Math.max(0,Y(0)-y)+'" rx="3" fill="'+(i===mons.length-1?"var(--accent)":"var(--muted)")+'" opacity="'+(i===mons.length-1?1:.55)+'"/>'
+      +svgText(cx,y-5,vals[i]+"%","middle",' style="fill:var(--ink)"')+svgText(cx,H-6,fmtD(parseD(m).getTime()))});
+  return s+'</svg>';
+}
+function calMonth(){
+  const t=today(),sel=ui.tday||t,b=parseD(t),base=new Date(b.getFullYear(),b.getMonth()+(ui.tmon||0),1);
+  const y=base.getFullYear(),m=base.getMonth(),lead=(base.getDay()+6)%7,nd=new Date(y,m+1,0).getDate();
+  let h='<div class="calhead"><button class="btn" data-act="tmon" data-a="-1" aria-label="Previous month">&larr;</button><strong>'+base.toLocaleDateString(undefined,{month:"long",year:"numeric"})+'</strong><button class="btn" data-act="tmon" data-a="1" aria-label="Next month">&rarr;</button></div>';
+  h+='<div class="cal">'+["Mo","Tu","We","Th","Fr","Sa","Su"].map(x=>'<div class="cw">'+x+'</div>').join("");
+  for(let i=0;i<lead;i++)h+='<div></div>';
+  for(let d=1;d<=nd;d++){
+    const ds=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"),fut=ds>t,n=fut?0:tCount(ds);
+    h+='<button class="day l'+(n>=5?3:n>=3?2:n>=1?1:0)+(ds===t?" now":"")+(ds===sel?" sel":"")+(fut?" fut":"")+'" data-act="tday" data-a="'+ds+'" aria-label="'+ds+', '+n+' of '+HAB.length+' done"><span class="dn">'+d+'</span><span class="dots">'+HAB.map(x=>'<i class="dot'+(!fut&&tDone(ds,x[0])?" on "+x[2]:"")+'"></i>').join("")+'</span></button>';
+  }
+  h+='</div><div class="legend">'+HAB.map(x=>'<span><i class="dot on '+x[2]+'"></i>'+x[1]+'</span>').join("")+'</div>';
+  return h;
+}
+function hcard(id,inner,sel){
+  const hb=HAB.find(x=>x[0]===id),on=tDone(sel,id);
+  return '<div class="panel task '+hb[2]+'"><div class="row between"><span class="badge '+hb[2]+'">'+hb[1]+'</span><span class="pill'+(on?" ok":"")+'">'+(on?"Done":"Not yet")+'</span></div>'+inner+'</div>';
+}
+function dayPanel(sel){
+  const t=today();
+  let h='<div class="row between"><div class="row" style="flex-wrap:nowrap"><button class="btn" data-act="tstep1" data-a="-1" aria-label="Previous day">&larr;</button><h2 style="font-size:17px">'+parseD(sel).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"})+'</h2><button class="btn" data-act="tstep1" data-a="1" aria-label="Next day">&rarr;</button></div>'+(sel!==t?'<button class="btn ghost" data-act="tgo">Today</button>':'<span class="pill acc">Today</span>')+'</div>';
+  h+='<div class="small muted">'+(sel>t?"This day has not happened yet.":tCount(sel)+" of "+HAB.length+" habits done.")+'</div>';
+  if(sel>t)return h;
+  const bk=bookInfo(sel);
+  /* 1 reading */
+  h+=hcard("read",
+    '<h3>Pages read on this day</h3><div class="row"><div style="width:110px"><input type="text" inputmode="numeric" id="tp-in" data-act="tpages" value="'+(pagesOn(sel)||"")+'" placeholder="0" aria-label="Pages read"></div><button class="btn" data-act="tpg" data-a="10">+10</button><button class="btn" data-act="tpg" data-a="20">+20</button><button class="btn" data-act="tpg" data-a="30">+30</button></div>'
+    +(bk.total?bar([{w:pct(bk.read,bk.total),c:"s3"}])+'<div class="small"><strong>'+bk.read+' of '+bk.total+' pages</strong> · '+bk.left+' left'+(bk.target&&sel===t?' · about '+bk.target+' a day to finish by '+fmtD(parseD(S.focus.book.due).getTime()):"")+'</div>':'<div class="small muted">Add the total pages and finish date in Book settings below.</div>')+'<label class="lab">One takeaway, optional'+inp("track.take."+sel,"One idea from today's reading")+'</label>'+bookSettings(),sel);
+  /* 2 app */
+  const steps=S.track.steps||[],sd=steps.filter(x=>x.done).length;
+  h+=hcard("app",
+    '<h3>Break the app into steps</h3>'+(steps.length?bar([{w:pct(sd,steps.length),c:"s4"}])+'<div class="small"><strong>'+sd+' of '+steps.length+' steps done</strong></div>':'<div class="small muted">No steps yet. Add the small steps that get the app live, or start from the standard deploy steps.</div>')
+    +'<div class="list">'+steps.map((s,i)=>'<div class="item" style="padding:8px 0"><div class="track"><input type="checkbox" data-act="tstep" data-k="'+i+'"'+(s.done?" checked":"")+' aria-label="'+esc(s.text)+'"><div class="row between" style="flex-wrap:nowrap"><div class="grow"><span'+(s.done?' class="muted" style="text-decoration:line-through"':"")+'>'+esc(s.text)+'</span>'+(s.done&&s.doneOn?' <span class="mono muted">'+fmtD(parseD(s.doneOn).getTime())+'</span>':"")+'</div><button class="btn ghost" data-act="tsdel" data-a="'+i+'" aria-label="Delete step">&times;</button></div></div></div>').join("")+'</div>'
+    +'<div class="row"><div class="grow"><input type="text" id="ts-text" placeholder="Add a step, for example: build the login screen" aria-label="New step"></div><button class="btn" data-act="tsadd">Add</button></div>'
+    +(steps.length?"":'<div><button class="btn" data-act="tsdeploy">Add the 10 deploy steps</button></div>')
+    +'<label class="row small" style="gap:8px"><input type="checkbox" data-act="tworked"'+(((S.track.appWorked||{})[sel])?" checked":"")+'> I worked on the app today without finishing a step</label>',sel);
+  /* 3 and 4 learning */
+  ["web","ai"].forEach(k=>{
+    const L=LEARN[k],es=learnOn(sel,k),mins=es.reduce((a,e)=>a+(+e.mins||0),0);
+    h+=hcard(k,'<h3>'+L.title+'</h3><div class="small muted">'+L.hint+'</div>'
+      +(es.length?'<div class="list">'+es.map((e,i)=>'<div class="item" style="padding:8px 0"><div class="row between" style="flex-wrap:nowrap"><div class="grow"><strong>'+esc(e.topic)+'</strong>'+(e.mins?' <span class="mono muted">'+e.mins+' min</span>':"")+(e.link?'<div class="small">'+(/^https?:\/\//i.test(e.link)?'<a href="'+esc(e.link)+'" target="_blank" rel="noopener noreferrer">'+esc(e.link.slice(0,60))+'</a>':esc(e.link))+'</div>':"")+'</div><button class="btn ghost" data-act="tldel" data-a="'+k+'" data-i="'+i+'" aria-label="Delete entry">&times;</button></div></div>').join("")+'</div><div class="mono muted">'+es.length+' logged · '+mins+' min</div>':"")
+      +'<div class="row">'+L.chips.map(c=>'<button class="chip" data-act="tchip" data-a="'+k+'" data-t="'+esc(c)+'">'+esc(c)+'</button>').join("")+'</div>'
+      +'<div class="grid3"><label class="lab" style="grid-column:span 2">What did you learn<input type="text" id="tl-'+k+'-topic" placeholder="Pick a chip or type it"></label><label class="lab">Minutes<input type="text" inputmode="numeric" id="tl-'+k+'-mins" placeholder="30"></label></div>'
+      +'<label class="lab">Video or link, optional<input type="text" id="tl-'+k+'-link" placeholder="https://"></label>'
+      +'<div><button class="btn primary" data-act="tladd" data-a="'+k+'">Log it</button></div>',sel);
+  });
+  /* 5 practice */
+  h+=hcard("prac",'<h3>Practice questions</h3><div class="small muted">Tap + for each question you answered.</div>'
+    +'<div class="grid2">'+PRAC.map(p=>'<div class="panel" style="padding:10px"><div class="row between"><span>'+p[1]+'</span><div class="row" style="gap:6px"><button class="btn" data-act="tprac" data-a="'+p[0]+'" data-d="-1" aria-label="Fewer '+p[1]+'">&minus;</button><b class="num" style="min-width:20px;text-align:center">'+pracOn(sel,p[0])+'</b><button class="btn" data-act="tprac" data-a="'+p[0]+'" data-d="1" aria-label="More '+p[1]+'">+</button></div></div></div>').join("")+'</div>'
+    +'<div class="small muted">Use the Practice tab for graded questions.</div>',sel);
+  /* 6 empathy */
+  const em=empOn(sel);
+  h+=hcard("emp",'<h3>One user empathy activity</h3><div class="small muted">Pick what you did today.</div>'
+    +'<div class="row">'+EMP.map(x=>'<button class="chip" aria-pressed="'+(em.type===x)+'" data-act="temp" data-a="'+esc(x)+'">'+esc(x)+'</button>').join("")+'</div>'
+    +'<label class="lab">What did you notice about the user, optional'+inp("track.emp."+sel+".note","One sentence in their words")+'</label>',sel);
+  return h;
+}
+function vTracker(){
+  const t=today(),sel=ui.tday||t;
+  const bk=bookInfo(t);
+  let h=head("Tracker","Pick a day, log what you did, and watch the calendar fill in.");
+  if(ui.msg)h+='<div class="notice" role="status">'+esc(ui.msg)+'</div>';
+  h+='<div class="split"><div class="calwrap">'+calMonth()+'</div><div class="daywrap">'+dayPanel(sel)+'</div></div>';
+  h+='<div class="sec"><h2>This month</h2><div class="list">'+HAB.map(x=>{const n=tMonth(x[0]),el=+t.slice(8),st=tStreak(x[0]);return '<div class="item" style="padding:8px 0"><div class="row between"><span class="row" style="gap:8px"><i class="dot on '+x[2]+'"></i>'+x[1]+'</span><span class="mono muted">'+n+' of '+el+' days · '+(st?st+" day streak":"no streak yet")+'</span></div>'+bar([{w:pct(n,el),c:""}])+'</div>'}).join("")+'</div></div>';
+  h+='<div class="sec"><h2>Completion each day this month</h2>'+chartDaily()+'</div>'
+    +'<div class="sec"><h2>Average completion by week</h2>'+chartWeekly()+'<div class="small muted">Share of the six habits done per day, averaged over the days that have happened so far that week.</div></div>';
+  return h;
+}
+
+/* ---------- interviews ---------- */
+const OUTCOMES=["Not set","Awaiting result","Passed","Not selected","Re-round planned","Offer"];
+function ivIdx(){return S.interviews.findIndex(x=>x.id===ui.iv)}
+function newIv(o){return Object.assign({id:"i"+Date.now()+Math.floor(Math.random()*99),company:"",role:"",round:"",date:"",outcome:0,overall:"",focus:"",qa:[],actions:[]},o||{})}
+function tagCount(id){return S.interviews.reduce((a,iv)=>a+iv.qa.filter(q=>(q.tags||[]).indexOf(id)>=0).length,0)}
+function actionTotals(){let d=0,t=0;S.interviews.forEach(iv=>iv.actions.forEach(a=>{t++;if(a.done)d++}));return[d,t]}
+const SENT=["Not set","Positive","Mixed","Negative"];
+const VERD=["No rating","Strong","Needs work"];
+function avaCls(n){let h=0;for(const c of String(n||"?"))h=(h*31+c.charCodeAt(0))>>>0;return "t"+(1+h%6)}
+function qTitle(q){if(q.title&&q.title.trim())return q.title.trim();const f=(q.q||"").split(/[?.]/)[0].trim();return f.length>60?f.slice(0,57)+"…":(f||"Question")}
+function ivLines(t){return String(t||"").split(/\n+/).map(x=>x.trim()).filter(Boolean)}
+function ivText(t,empty){const a=ivLines(t);if(!a.length)return '<div class="muted small">'+empty+'</div>';return a.length>1?'<ul class="blist">'+a.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>':'<div>'+esc(a[0])+'</div>'}
+function ivAva(n,big){return '<span class="ava '+avaCls(n)+(big?" big":"")+'" aria-hidden="true">'+esc(String(n||"?").trim().charAt(0).toUpperCase()||"?")+'</span>'}
+function ivStars(n){return '<span class="stars" role="group" aria-label="Overall rating">'+[1,2,3,4,5].map(i=>'<button type="button" class="star'+(i<=n?" on":"")+'" data-act="irate" data-a="'+i+'" aria-label="'+i+' of 5">&#9733;</button>').join("")+'</span>'}
+function vInterviews(){
+  const L=S.interviews;if(!L.find(x=>x.id===ui.iv))ui.iv=L.length?L[0].id:null;
+  const i=ivIdx(),cur=i>=0?L[i]:null,P="interviews."+i,ed=!!ui.ivEdit;
+  let h=head("Interview feedback","Track and learn from each interview: what was asked, what you said, what they said back, and what to change.");
+  if(ui.msg)h+='<div class="notice" role="status">'+esc(ui.msg)+'</div>';
+  h+='<div class="ivcards" role="group" aria-label="Interviews">'+L.map(x=>{
+    const sub=x.date?fmtD(parseD(x.date).getTime()):((x.outcome||0)?OUTCOMES[x.outcome]:(x.round||"No date yet"));
+    return '<button type="button" class="ivcard'+(x.id===ui.iv?" sel":"")+'" data-act="ipick" data-a="'+x.id+'">'+ivAva(x.company)+'<span class="ivt"><b>'+esc(x.company||"Untitled")+'</b><span class="small muted">'+esc(sub)+'</span></span></button>'}).join("")
+    +'<button type="button" class="ivcard add" data-act="iaddtoggle"><span class="ava plus" aria-hidden="true">+</span><span class="ivt"><b>Add company</b></span></button></div>';
+  if(ui.ivAdd||!L.length){
+    h+='<div class="panel"><div class="row"><div class="grow" style="min-width:180px"><input type="text" id="nv-company" placeholder="Company name" aria-label="Company"></div><button class="btn primary" data-act="iadd">Add interview</button></div>'
+      +(sample?'<div class="small muted">Or paste notes and Claude sorts them into rows. It only uses what you wrote.</div><textarea data-path="ui.recap" rows="5" placeholder="Paste your recap or the interviewer\'s feedback"'+(ui.recapBusy?" disabled":"")+'>'+esc(ui.recap||"")+'</textarea><div class="row"><button class="btn" data-act="irecap"'+(ui.recapBusy?" disabled":"")+'>'+(ui.recapBusy?"Sorting…":"Sort into a new interview")+'</button></div>':"")+'</div>';
+  }
+  if(!cur)return h;
+  const se=cur.sentiment||0,rt=cur.rating||0;
+  const meta=[cur.role,cur.round,cur.date?fmtD(parseD(cur.date).getTime()):""].filter(Boolean).join(" · ");
+  h+='<div class="ivmain"><div class="row between"><div class="row" style="gap:14px;flex-wrap:nowrap;min-width:0">'+ivAva(cur.company,true)+'<div style="min-width:0"><h2 style="font-size:22px">'+esc(cur.company||"Untitled")+'</h2><div class="muted small">'+(esc(meta)||"Add role, round and date with Edit")+'</div></div></div>'
+    +'<div class="row">'+(se?'<span class="pill '+["","ok","warn","bad"][se]+'">Overall: '+SENT[se]+'</span>':"")+((cur.outcome||0)?'<span class="pill acc">'+OUTCOMES[cur.outcome]+'</span>':"")+'<button class="btn" data-act="iedit">'+(ed?"Done editing":"Edit")+'</button></div></div>';
+  if(ed){
+    h+='<div class="panel"><div class="grid3"><label class="lab">Company'+inp(P+".company","")+'</label><label class="lab">Role'+inp(P+".role","")+'</label><label class="lab">Round'+inp(P+".round","For example: round 1")+'</label></div>'
+      +'<div class="grid3"><label class="lab">Date<input type="date" data-path="'+P+'.date" data-act="rerender" value="'+esc(cur.date||"")+'"></label>'
+      +'<label class="lab">Outcome<select data-act="iouts">'+OUTCOMES.map((o,k)=>'<option value="'+k+'"'+((cur.outcome||0)===k?" selected":"")+'>'+o+'</option>').join("")+'</select></label>'
+      +'<label class="lab">How it went overall<select data-act="isent">'+SENT.map((o,k)=>'<option value="'+k+'"'+(se===k?" selected":"")+'>'+o+'</option>').join("")+'</select></label></div></div>';
+  }
+  h+='<div class="sumrow"><div class="sumbox main"><div class="rb"><div class="eyebrow">Overall rating</div><div class="row" style="gap:10px"><b class="bignum">'+(rt?rt+'<span class="muted">/5</span>':'<span class="muted">–</span>')+'</b>'+ivStars(rt)+'</div><div class="small muted">'+(rt?"Tap a star again to clear":"Tap a star to rate it yourself")+'</div></div>'
+    +'<div class="ob"><div class="eyebrow">Overall feedback</div>'+(ed?ta(P+".overall","What the interviewer said overall",5):ivText(cur.overall,"Not recorded yet. Tap Edit to add it."))+'</div></div>'
+    +'<div class="sumbox key"><div class="eyebrow">Key improvement area</div>'+(ed?ta(P+".focus","The one or two things to change",5):ivText(cur.focus,"Not recorded yet."))+'</div></div>';
+  h+='<div class="row between"><h2>Detailed feedback</h2><span class="mono muted">'+cur.qa.length+' question'+(cur.qa.length===1?"":"s")+'</span></div>';
+  if(cur.qa.length&&!ed)h+='<div class="qgrid qhead"><div>Question</div><div>Your answer / approach</div><div>Interviewer feedback</div></div>';
+  cur.qa.forEach((q,k)=>{
+    const tg=q.tags||[],vd=q.verdict||0;
+    if(ed){
+      const del=ui.cdel==="q"+k;
+      h+='<div class="panel"><div class="grid2"><label class="lab">Short title'+inp(P+".qa."+k+".title","For example: A/B experiment")+'</label><div class="lab">Verdict<div class="row">'+VERD.map((o,j)=>'<button type="button" class="chip" aria-pressed="'+(vd===j)+'" data-act="iverd" data-q="'+k+'" data-a="'+j+'">'+o+'</button>').join("")+'</div></div></div>'
+        +'<label class="lab">Question'+ta(P+".qa."+k+".q","",2)+'</label>'
+        +'<div class="grid2"><label class="lab">My answer or approach (one point per line)'+ta(P+".qa."+k+".a","",4)+'</label><label class="lab">Interviewer feedback'+ta(P+".qa."+k+".fb","",4)+'</label></div>'
+        +'<label class="lab">What to improve, or a better structure'+ta(P+".qa."+k+".imp","",3)+'</label>'
+        +'<div class="row"><span class="small muted">Which gap is this about?</span>'+FEEDBACK.map(f=>'<button type="button" class="chip" aria-pressed="'+(tg.indexOf(f.id)>=0)+'" data-act="itag" data-q="'+k+'" data-a="'+f.id+'">'+f.name+'</button>').join("")+'</div>'
+        +'<div class="row"><button class="btn ghost" data-act="iqdel" data-a="'+k+'">'+(del?"Confirm delete":"Delete question")+'</button></div></div>';
+    }else{
+      h+='<div class="qgrid qrow"><div class="qcell"><span class="qn">'+(k+1)+'</span><div style="min-width:0"><h3>'+esc(qTitle(q))+'</h3><div class="small muted">'+esc(q.q||"")+'</div>'+(tg.length?'<div class="row" style="gap:4px;margin-top:6px">'+tg.map(id=>'<span class="pill">'+esc((FEEDBACK.find(f=>f.id===id)||{name:id}).name)+'</span>').join("")+'</div>':"")+'</div></div>'
+        +'<div class="acell"><div class="mlabel">Your answer</div>'+ivText(q.a,"Not recorded.")+'</div>'
+        +'<div class="fcell v'+vd+'"><div class="mlabel">Interviewer feedback</div><div class="fbrow"><span class="vi" aria-hidden="true">'+["–","&#10003;","!"][vd]+'</span><div style="min-width:0">'+(vd?'<b class="small">'+VERD[vd]+'</b>':"")+ivText(q.fb,"No feedback recorded.")+(q.imp&&q.imp.trim()?'<div class="imp"><b class="small">Improve:</b> '+esc(q.imp)+'</div>':"")+'</div></div></div></div>';
+    }
+  });
+  if(ed)h+='<div><button class="btn" data-act="iqadd">Add a question</button></div>';
+  if(!cur.qa.length&&!ed)h+='<div class="muted">No questions yet. Tap Edit, then Add a question.</div>';
+  const ac=cur.actions;
+  h+='<div class="sec"><div class="row between"><h2>Things to practice</h2><span class="pill acc">'+ac.filter(a=>a.done).length+' of '+ac.length+' done</span></div>'
+    +'<div class="list">'+ac.map((a,k)=>'<div class="item" style="padding:10px 0"><div class="track"><input type="checkbox" data-act="iact" data-k="'+k+'"'+(a.done?" checked":"")+' aria-label="Done"><div class="row" style="flex-wrap:nowrap"><div class="grow">'+(ed?inp(P+".actions."+k+".text",""):'<span'+(a.done?' class="muted" style="text-decoration:line-through"':"")+'>'+esc(a.text)+'</span>')+'</div>'+(ed?'<button class="btn ghost" data-act="iadel" data-a="'+k+'" aria-label="Delete">&times;</button>':"")+'</div></div></div>').join("")+'</div>'
+    +'<div class="row"><div class="grow"><input type="text" id="ia-text" placeholder="Add something to practice, for example: use a fixed order for RCA"></div><button class="btn" data-act="iaadd">Add</button></div></div>';
+  if(ed)h+='<div class="sec"><button class="btn ghost" data-act="idel" style="align-self:flex-start">'+(ui.cdel==="iv"?"Confirm delete interview":"Delete this interview")+'</button></div>';
+  return h+'</div>';
+}
+async function recapIv(){
+  const txt=(ui.recap||"").trim();if(txt.length<40){say("Paste a longer recap first.");return}
+  ui.recapBusy=true;render();
+  try{
+    const r=await askJson("Sort this interview recap into JSON. Use ONLY what the recap says. If something is not stated, use an empty string. Do not add feedback, advice or suggestions that are not in the recap. Keep the person's own wording where you can.\n\nRecap:\n"+txt.slice(0,12000)+"\n\nReply with only JSON: {\"company\":\"\",\"role\":\"\",\"overall\":\"overall feedback if stated\",\"questions\":[{\"q\":\"question or area\",\"a\":\"my answer if stated\",\"feedback\":\"interviewer feedback if stated\",\"improve\":\"what to improve if stated\"}]}","default");
+    const iv=newIv({company:String(r.company||"Untitled"),role:String(r.role||""),overall:String(r.overall||""),qa:(r.questions||[]).slice(0,20).map(x=>({q:String(x.q||""),a:String(x.a||""),fb:String(x.feedback||""),imp:String(x.improve||""),tags:[]}))});
+    S.interviews.push(iv);ui.iv=iv.id;ui.ivAdd=false;ui.recap="";log("interview","Added interview: "+iv.company+" ("+iv.qa.length+" rows)");
+  }catch(e){ui.msg=errCopy(e)}
+  ui.recapBusy=false;render();
+}
+
+/* ---------- state ---------- */
+const DEF=()=>({v:1,startDate:"2026-10-19",videos:{web:[],ai:[]},track:{pages:{},steps:[],appWorked:{},learn:{},prac:{},emp:{}},interviews:[],app:{problem:{},select:{},versions:{},arch:"",log:[]},course:{topics:{},notes:{},sessions:{}},focus:{deploy:{app:"",url:"",steps:{}},book:{title:"",author:"",total:"",read:"",due:"",log:[]}},feedback:{},daily:{},weekly:{},skills:{},surfaces:{},projects:{},cases:[],mentor:[],log:[]});
+let S=DEF();
+const ui={tab:"tracker",hwk:0,hedit:false,openCourse:0,date:today(),openSkill:null,openFb:null,surface:"homepage",drill:null,coach:{type:CASE_TYPES[0],status:"idle",question:"",answer:"",result:null,err:""},mentor:null,msg:"",busy:false};
+let sample=null,db=null,docRef=null,saveTimer=null,saving=false,dirty=false;
+
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function parseD(s){const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)}
+function addDays(s,n){const d=parseD(s);d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function daysBetween(a,b){return Math.round((parseD(b)-parseD(a))/864e5)}
+function fmtD(ts){return new Date(ts).toLocaleDateString(undefined,{day:"numeric",month:"short"})}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+
+/* ---------- persistence ---------- */
+function setStatus(t){const e=document.getElementById("savestate");if(e)e.textContent=t}
+function localLoad(){try{const r=localStorage.getItem("pmgos.v1");return r?JSON.parse(r):null}catch(e){return null}}
+function localSave(){try{localStorage.setItem("pmgos.v1",JSON.stringify(S))}catch(e){}}
+function schedule(){dirty=true;setStatus("Unsaved changes");clearTimeout(saveTimer);saveTimer=setTimeout(flush,800)}
+async function flush(){
+  if(saving){saveTimer=setTimeout(flush,400);return}
+  if(!dirty)return;dirty=false;localSave();
+  if(!docRef){setStatus("Saved on this device only");return}
+  saving=true;setStatus("Saving…");
+  try{await docRef.set(clone(S));setStatus("Saved")}catch(e){setStatus("Could not save to server, kept on this device");dirty=false}
+  saving=false;
+}
+function merge(base,src){const o=Object.assign(base,src||{});const f=DEF().focus;o.focus=o.focus||f;o.focus.deploy=Object.assign(f.deploy,o.focus.deploy);o.focus.book=Object.assign(f.book,o.focus.book);return o}
+async function boot(){
+  const local=localLoad();if(local)S=merge(DEF(),local);
+  render();
+  try{
+    const c=window.claude;
+    if(c&&c.use){
+      const user=await c.use("user");const uid=user?await user.id():null;
+      db=await c.use("db");
+      sample=await c.use("sample");
+      if(db){
+        docRef=db.doc("tracker/growth_os");
+        const snap=await docRef.get();
+        if(snap.exists){S=merge(DEF(),clone(snap.data()))}
+        else{dirty=true;flush()}
+        docRef.onSnapshot(s=>{
+          if(!s.exists||s.metadata.hasPendingWrites||dirty||saving)return;
+          const inc=clone(s.data());if(JSON.stringify(inc)===JSON.stringify(S))return;
+          S=merge(DEF(),inc);localSave();render();
+        },()=>{});
+        setStatus("Saved");
+      }else setStatus("Saved on this device only");
+    }else setStatus("Saved on this device only");
+  }catch(e){setStatus("Saved on this device only")}
+  render();
+}
+
+/* ---------- helpers ---------- */
+function getP(path){const r=path.startsWith("ui.")?ui:S;const ks=(path.startsWith("ui.")?path.slice(3):path).split(".");let o=r;for(const k of ks){if(o==null)return undefined;o=o[k]}return o}
+function setP(path,val){const isUi=path.startsWith("ui.");let o=isUi?ui:S;const ks=(isUi?path.slice(3):path).split(".");for(let i=0;i<ks.length-1;i++){if(o[ks[i]]==null||typeof o[ks[i]]!=="object")o[ks[i]]={};o=o[ks[i]]}o[ks[ks.length-1]]=val;if(!isUi)schedule()}
+function ta(path,ph,rows){return '<textarea data-path="'+esc(path)+'" placeholder="'+esc(ph||"")+'" rows="'+(rows||3)+'">'+esc(getP(path)||"")+'</textarea>'}
+function inp(path,ph,id){return '<input type="text" '+(id?'id="'+id+'" ':"")+'data-path="'+esc(path)+'" placeholder="'+esc(ph||"")+'" value="'+esc(getP(path)||"")+'">'}
+function log(type,text,tag){S.log.push({ts:Date.now(),type,text:String(text).slice(0,300),tag:tag||[]});if(S.log.length>400)S.log=S.log.slice(-400);schedule()}
+function say(m){ui.msg=m;render();}
+function weekInfo(date){const n=daysBetween(S.startDate,date);const wk=n<0?1:Math.min(8,Math.floor(n/7)+1);return{n,wk,done:n>=56}}
+function pct(a,b){return b?Math.round(a/b*100):0}
+function bar(parts){return '<div class="bar">'+parts.map(p=>'<i class="'+(p.c||"")+'" style="width:'+p.w+'%"></i>').join("")+'</div>'}
+function dimMean(sc){const v=DIMS.map(d=>+sc[d[0]]||0);return v.reduce((a,b)=>a+b,0)/v.length}
+
+/* ---------- Claude calls ---------- */
+const NO_SAMPLE='<div class="notice">Claude evaluation is not available in this view. Open the page in the Claude app, signed in, to use this.</div>';
+function errCopy(e){const c=e&&e.code;if(c==="not_granted")return"Claude access was declined for this page.";if(c==="rate_limited")return"Too many requests or usage limit reached. Try again later.";if(c==="invalid_json")return"Claude's reply could not be read. Try again.";return"Claude could not answer right now. Try again."}
+
+async function askJson(prompt,tier){return await sample.json(prompt,{modelTier:tier||"default",cache:false})}
+
+/* ---------- tab renderers ---------- */
+function head(t,l){return '<h1>'+t+'</h1><p class="lede">'+l+'</p>'}
+function lastPracticed(id){let t=0;const f=S.feedback[id];if(f&&f.evidence)f.evidence.forEach(e=>{t=Math.max(t,e.ts)});S.log.forEach(l=>{if(l.tag&&l.tag.indexOf(id)>=0)t=Math.max(t,l.ts)});return t}
+function caseAvg(dim,n){const cs=n?S.cases.slice(-n):S.cases;if(!cs.length)return null;return cs.reduce((a,c)=>a+(+c.scores[dim]||0),0)/cs.length}
+
+function vDashboard(){
+  let h=head("Feedback","Seven gaps from the re-round feedback. A level can only rise when the evidence log supports it.");
+  if(ui.msg)h+='<div class="notice" role="status">'+esc(ui.msg)+'</div>';
+  h+='<div class="list">';
+  FEEDBACK.forEach(f=>{
+    const st=S.feedback[f.id]||{level:0,evidence:[]};const ev=st.evidence||[];
+    const lp=lastPracticed(f.id);
+    const cls=["bad","warn","acc","ok"][st.level||0];
+    const dimMap={empathy:"empathy",structure:"structure",depth:"depth",tech:"technical"};
+    const avg=dimMap[f.id]?caseAvg(dimMap[f.id]):null;
+    h+='<div class="item"><div class="row between"><div class="grow"><h2>'+f.name+'</h2><div class="muted small">'+esc(f.gap)+'</div></div>'
+      +'<span class="pill '+cls+'">'+LEVELS[st.level||0]+'</span></div>'
+      +'<div class="small"><span class="muted">Target:</span> '+esc(f.win)+'</div>'
+      +'<div class="row mono muted"><span>'+ev.length+' evidence '+(ev.length===1?"entry":"entries")+'</span><span>Last practiced: '+(lp?fmtD(lp):"never")+'</span>'+(tagCount(f.id)?'<span>'+tagCount(f.id)+' interview note'+(tagCount(f.id)===1?'':'s')+' tagged</span>':"")
+      +(avg!=null?'<span>Case coach avg: '+avg.toFixed(1)+' / 5 over '+S.cases.length+' cases</span>':"")+'</div>'
+      +'<div class="grid2"><label class="lab">Next action'+inp("feedback."+f.id+".next","What will you do next on this gap?")+'</label>'
+      +'<label class="lab">Level<select data-act="fb-level" data-a="'+f.id+'">'+LEVELS.map((l,i)=>'<option value="'+i+'"'+((st.level||0)===i?" selected":"")+'>'+l+(i===2?" (needs 1 evidence)":i===3?" (needs 3 evidence)":"")+'</option>').join("")+'</select></label></div>'
+      +'<div class="row"><button class="btn small" data-act="nav" data-a="'+f.tab+'" data-s="'+(f.sub||"")+'">Practice this</button><button class="btn small ghost" data-act="fb-open" data-a="'+f.id+'">'+(ui.openFb===f.id?"Hide":"Show")+' evidence</button></div>';
+    if(ui.openFb===f.id){
+      h+='<div class="panel">'+(ev.length?ev.slice().reverse().map(e=>'<div class="small"><span class="mono muted">'+fmtD(e.ts)+'</span> '+esc(e.text)+'</div>').join(""):'<div class="muted small">No evidence yet. Example of the standard: "I interviewed five users, changed my original hypothesis, and can explain why."</div>')
+        +'<div class="row"><div class="grow"><input type="text" id="ev-'+f.id+'" placeholder="One concrete thing you did or can now defend"></div><button class="btn primary" data-act="fb-add" data-a="'+f.id+'">Add evidence</button></div></div>';
+    }
+    h+='</div>';
+  });
+  return h+'</div>';
+}
+
+const DEPLOY=[
+ ["scope","Pick the app and cut it to one core flow","Write one sentence: who uses it and the single thing it does. Cut everything else."],
+ ["repo","Push the code to GitHub with a README","README says what it does, how to run it, and lists the endpoints."],
+ ["config","Move secrets and settings into environment variables","No keys in the repo. Add a .env.example file."],
+ ["host","Choose a host and create the service","Render, Railway, Fly.io and Vercel all work. Note which one and why."],
+ ["deploy","Deploy and get a public URL","Open the URL on your phone and confirm it loads."],
+ ["smoke","Test the live app end to end","Run the happy path and one failure case. Write down what broke."],
+ ["logs","Find the logs and trigger one error on purpose","Show where that error appears in the host's logs."],
+ ["diagram","Draw the architecture diagram","Show UI, API, service, database, events and where it can fail."],
+ ["demo","Record a 2-minute demo or write the walkthrough","Explain the request, response, failure handling and persistence."],
+ ["defend","Defend it: answer 2 follow-ups","Use Test me on a project in the Build lab."]
+];
+const ITERS=[
+ ["i1","Iteration 1","22 Oct","One user, one problem, one core action. A live version on a public URL, even if data is held in memory."],
+ ["i2","Iteration 2","26 Oct","Real database, and at least one real person using it. Note what they did and what confused them."],
+ ["i3","Iteration 3","31 Oct","Fix the top issue those users hit. Add logs, README, architecture diagram and a short demo."]
+];
+function bookInfo(date){
+  const b=S.focus.book,total=parseInt(b.total,10)||0,read=Math.min(total,(parseInt(b.read,10)||0)+sumPages()),left=Math.max(0,total-read);
+  const days=b.due?Math.max(1,daysBetween(date,b.due)+1):0;
+  const tdy=pagesOn(date);
+  return{total,read,left,days,target:days&&left?Math.ceil(left/days):0,today:tdy,title:(b.title||"").trim()};
+}
+const VERS=[
+ ["v0","V0","Basic usable product","Basic frontend, core user flow, deploy something usable."],
+ ["v1","V1","Real backend","Backend, API, database."],
+ ["v2","V2","Real user state","Authentication, persistent user data, validation."],
+ ["v3","V3","Product instrumentation","Analytics events, funnels, error tracking, usage data."],
+ ["v4","V4","Better architecture","Service separation, caching, retries, background processes, reliability."],
+ ["v5","V5","AI capability, only if the product needs it","Model call, structured output, error handling, latency and cost."],
+ ["v6","V6","RAG or agents, only if justified","Embeddings, retrieval, vector store, tool use, memory, evaluation."],
+ ["v7","V7","Production quality","Testing, monitoring, security, privacy, performance, real user feedback."]
+];
+const VSTAT=["Not started","In progress","Shipped"];
+const PT=[["user","User"],["context","Context"],["problem","Problem"],["workaround","What they do today"],["evidence","Evidence: what you actually saw or heard"],["hypothesis","Hypothesis"],["solution","Solution"],["metric","Success metric"]];
+const SEL=["Who is the user?","What is the real problem?","How painful is it?","How often does it happen?","What do users do today?","Why are existing solutions insufficient?","Can I reach these users?","Can I build an MVP?","Can it support several useful iterations?","Does it create enough technical depth to learn from?","Could real users actually use it?","Can I defend the product and technical decisions in an interview?"];
+const ALOG=[["feature","Feature shipped"],["user","User tested"],["bug","Bug fixed"],["api","API built"],["db","Database work"],["deploy","Deployment"],["analytics","Analytics"],["ai","AI feature"]];
+const COURSE=[
+ ["Week 1","AI fundamentals and algorithms",["Supervised vs unsupervised learning","AI flywheel","AI product taxonomy","Logistic regression","Clustering","Decision trees","SVM","Random forest","Bandits","First-principles thinking","Clarifying questions","Website building","GitHub","Node.js","Vercel","Supabase","Development to deployment"]],
+ ["Week 2","Generative AI and ML systems",["Deep learning","Transformers","LLMs","Advanced prompting","MLOps","LLMOps","Monitoring","ML / LLM system architecture","AI product sense","Native app building"]],
+ ["Week 3","GenAI tools, AI PM role and RAG",["GenAI tool landscape","AI product stack","AI PM role","RAG architecture","Parsing","Chunking","Retrieval","Reranking","RAG metrics","RAG prototype","RCA","Guesstimates"]],
+ ["Week 4","AI agents",["Agents","Agentic architecture","Multi-agent workflows","Agent failure and diagnosis","Hands-on agent build","Claude","LangChain","No-code","MCP","A2A","HITL","Memory","Tool use","Execution metrics"]],
+ ["Week 5","Advanced evals",["Evaluation frameworks","LLM-as-judge","Cohen's Kappa","Eval cards","Axial coding","Open coding","Eval prompting","Agent harness","Prompt assembly","Context management","Session persistence","Growth strategy","Pricing strategy"]],
+ ["Week 6","Spec-driven development",["Spec anatomy","Vibe coding","PRD to shipped","Product context","Code context","Spec to code","Lovable prototyping","Market entry","GTM"]],
+ ["Week 7","AI product design and UX",["Non-determinism","HITL UX","AI-native patterns","Trust signals","Privacy","Security","Governance","Data residency","Enterprise security","n8n agent building","Behavioral interviews"]],
+ ["Week 8","AI risks, biases and product metrics",["Bias","Hallucinations","EU AI Act","India DPDP Act","Traces","AI operational metrics","A/B testing","AI general interview questions"]],
+ ["Weeks 9 and 10","GTM, model selection and mock interviews",["GTM","Model selection","Strategy","Mock interviews"]]
+];
+const CSTAT=["Not covered","Learned, not used yet","Applied to my app"];
+function ptFilled(){const p=S.app.problem||{};return PT.filter(f=>(p[f[0]]||"").trim()).length}
+function vApp(){
+  const p=S.app.problem||{};const need=["user","problem","workaround","evidence"].filter(k=>!(p[k]||"").trim());
+  const vs=S.app.versions||{};const cur=VERS.find(v=>!(vs[v[0]]&&vs[v[0]].status===2));
+  const cnt=k=>(S.app.log||[]).filter(l=>l.kind===k).length;
+  let h=head("My app","The app is the main learning route. Define the problem first, then build in versions. Nothing here is filled in for you.");
+  if(ui.msg)h+='<div class="notice" role="status">'+esc(ui.msg)+'</div>';
+  h+=appTop();
+  h+='<div class="sec"><div class="row between"><h2>Problem</h2>'+(need.length?'<span class="pill warn">Tighten before building: add '+need.map(k=>PT.find(f=>f[0]===k)[1].split(":")[0].toLowerCase()).join(", ")+'</span>':'<span class="pill ok">Ready to build</span>')+'</div>'
+    +'<div class="muted small">User, context, problem, existing workaround, evidence, hypothesis, solution, success metric. '+ptFilled()+' of '+PT.length+' filled.</div>'
+    +'<div class="grid2">'+PT.map(f=>'<label class="lab">'+f[1]+ta("app.problem."+f[0],"",3)+'</label>').join("")+'</div>'
+    +'<details><summary>Check the idea against 12 questions ('+SEL.filter((q,i)=>((S.app.select||{})["q"+i]||"").trim()).length+' answered)</summary><div class="grid2" style="margin-top:12px">'+SEL.map((q,i)=>'<label class="lab">'+(i+1)+'. '+q+ta("app.select.q"+i,"",2)+'</label>').join("")+'</div></details></div>';
+  h+='<div class="sec"><div class="row between"><h2>Versions</h2>'+(cur?'<span class="pill acc">Current: '+cur[1]+'</span>':'<span class="pill ok">All shipped</span>')+'</div><div class="list">'
+    +VERS.map(v=>{const x=vs[v[0]]||{status:0};const cls=["","acc","ok"][x.status||0];return '<div class="item"><div class="row between"><div class="grow"><strong>'+v[1]+' · '+v[2]+'</strong><div class="small muted">'+v[3]+'</div></div><label class="lab" style="min-width:150px"><select data-act="vstat" data-k="'+v[0]+'" aria-label="'+v[1]+' status">'+VSTAT.map((s,i)=>'<option value="'+i+'"'+((x.status||0)===i?" selected":"")+'>'+s+'</option>').join("")+'</select></label></div>'
+      +'<div class="grid2"><label class="lab">What shipped, with a link'+inp("app.versions."+v[0]+".note","")+'</label><label class="lab">End-of-iteration review: user problem improved, what to measure, what can fail'+ta("app.versions."+v[0]+".review","",2)+'</label></div></div>'}).join("")+'</div></div>';
+  h+='<div class="sec"><h2>Evidence log</h2><div class="row mono muted">'+ALOG.map(a=>a[1]+" "+cnt(a[0])).join(" · ")+'</div>'
+    +'<div class="row"><label class="lab" style="width:170px">Type<select id="al-kind">'+ALOG.map(a=>'<option value="'+a[0]+'">'+a[1]+'</option>').join("")+'</select></label><label class="lab grow">What happened<input type="text" id="al-text" placeholder="Be specific. Real events only."></label><button class="btn primary" data-act="alog" style="align-self:flex-end">Add</button></div>'
+    +((S.app.log||[]).length?'<div class="list">'+S.app.log.slice(-12).reverse().map(l=>'<div class="item small"><span class="mono muted">'+fmtD(l.ts)+' · '+esc((ALOG.find(a=>a[0]===l.kind)||[0,l.kind])[1])+'</span><span>'+esc(l.text)+'</span></div>').join("")+'</div>':'<div class="muted small">Nothing logged yet. Counts above come only from entries you add.</div>')+'</div>';
+  h+='<div class="sec"><h2>Architecture map</h2><div class="muted small">For each important feature: user action, frontend, API, backend or service, database or external service, response, UI update, analytics.</div>'+ta("app.arch","Draw it in words, one feature at a time",6)+'</div>';
+  const keepMsg=ui.msg;ui.msg="";const chk=noHead(vBuild());ui.msg=keepMsg;
+  h+='<div class="sec"><h2>Interview-ready checklist</h2>'+chk+'</div>';
+  return h;
+}
+function vCourse(){
+  const all=[];COURSE.forEach((w,wi)=>w[2].forEach((t,ti)=>all.push("w"+wi+"t"+ti)));
+  const st=k=>(S.course.topics||{})[k]||0;
+  const learned=all.filter(k=>st(k)===1).length,applied=all.filter(k=>st(k)===2).length;
+  const sess=Object.values(S.course.sessions||{}).filter(Boolean).length;
+  let h=head("Course","Tracked separately from the app. Finishing a topic here does not make a skill interview defensible.");
+  if(ui.msg)h+='<div class="notice" role="status">'+esc(ui.msg)+'</div>';
+  h+='<div class="row mono muted"><span>'+sess+' of '+COURSE.length+' sessions completed</span><span>'+(learned+applied)+' of '+all.length+' topics learned</span><span>'+applied+' applied to my app</span><span>'+learned+' understood, not used yet</span></div>'
+    +bar([{w:pct(applied,all.length),c:"s4"},{w:pct(learned,all.length),c:"s3"}])
+    +'<div class="muted small">For each topic ask: does my app need this now? If yes, apply it. If no, keep the concept and do not force it in.</div>';
+  COURSE.forEach((w,wi)=>{
+    const open=ui.openCourse===wi;const done=w[2].filter((t,ti)=>st("w"+wi+"t"+ti)>0).length;
+    h+='<div class="sec"><div class="row between"><div class="row grow"><button class="btn ghost" data-act="cw-open" data-a="'+wi+'" aria-expanded="'+open+'">'+(open?"&minus;":"+")+'</button><div><h3>'+w[0]+': '+w[1]+'</h3></div></div><div class="row"><span class="mono muted">'+done+' of '+w[2].length+'</span><label class="row small" style="gap:6px"><input type="checkbox" data-act="csess" data-k="'+wi+'"'+(((S.course.sessions||{})["s"+wi])?" checked":"")+'> Session done</label></div></div>';
+    if(open){
+      h+='<div class="list">'+w[2].map((t,ti)=>{const k="w"+wi+"t"+ti;return '<div class="item"><div class="row between"><span>'+esc(t)+'</span><select data-act="ctopic" data-k="'+k+'" data-w="'+wi+'" aria-label="'+esc(t)+' status" style="width:auto">'+CSTAT.map((s,i)=>'<option value="'+i+'"'+(st(k)===i?" selected":"")+'>'+s+'</option>').join("")+'</select></div></div>'}).join("")+'</div>'
+        +'<label class="lab">Notes, and how I applied it to my app (needed to mark a topic Applied)'+ta("course.notes.w"+wi,"",4)+'</label>';
+    }
+    h+='</div>';
+  });
+  return h;
+}
+
+/* ---------- navigation hubs ---------- */
+const NAV=[
+ ["Daily",[["tracker","Tracker","cal"]]],
+ ["Build",[["app","My app","app"]]],
+ ["Interview prep",[["interviews","Interviews","chat"],["practice","Practice","pen"]]],
+ ["Learn and review",[["learn","Learn","book"],["review","Review","chart"]]]
+];
+const ICONS={
+ cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ app:'<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><path d="M17 13v8M13 17h8"/>',
+ chat:'<path d="M4 5h16v11H9l-5 4z"/>',
+ pen:'<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',
+ book:'<path d="M5 4h14v16H7a2 2 0 01-2-2z"/><path d="M9 8h6"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>'
+};
+function navBadge(id){
+  if(id==="tracker")return tCount(today())+"/"+HAB.length;
+  if(id==="app"){const st=S.track.steps||[];return st.length?st.filter(x=>x.done).length+"/"+st.length:""}
+  if(id==="interviews")return S.interviews.length?String(S.interviews.length):"";
+  return "";
+}
+function navHtml(){
+  return NAV.map(g=>'<div class="grp"><div class="ng">'+g[0]+'</div>'+g[1].map(t=>{const b=navBadge(t[0]);return '<button type="button" data-act="nav" data-a="'+t[0]+'"'+(t[0]===ui.tab?' aria-current="page"':"")+'><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[t[2]]+'</svg><span>'+t[1]+'</span>'+(b?'<span class="nb">'+b+'</span>':"")+'</button>'}).join("")+'</div>').join("");
+}
+function noHead(h){return h.replace(/^<h1>[\s\S]*?<\/h1><p class="lede">[\s\S]*?<\/p>/,"")}
+function subChips(key,opts){return '<div class="tabs" role="group" aria-label="Section">'+opts.map(o=>'<button class="chip" aria-pressed="'+((ui[key]||opts[0][0])===o[0])+'" data-act="sub" data-k="'+key+'" data-a="'+o[0]+'">'+o[1]+'</button>').join("")+'</div>'}
+function bookSettings(){
+  const b=S.focus.book;
+  return '<details><summary>Book settings</summary><div class="grid2" style="margin-top:10px"><label class="lab">Title'+inp("focus.book.title","")+'</label><label class="lab">Author'+inp("focus.book.author","")+'</label></div>'
+    +'<div class="grid3" style="margin-top:10px"><label class="lab">Total pages<input type="text" inputmode="numeric" data-path="focus.book.total" data-act="rerender" value="'+esc(b.total||"")+'"></label>'
+    +'<label class="lab">Pages read before tracking<input type="text" inputmode="numeric" data-path="focus.book.read" data-act="rerender" value="'+esc(b.read||"")+'"></label>'
+    +'<label class="lab">Finish by<input type="date" data-path="focus.book.due" data-act="rerender" value="'+esc(b.due||"")+'"></label></div></details>';
+}
+function appTop(){
+  const it=S.focus.deploy.iters||{};
+  return '<div class="sec"><h2>Iterations to 31 Oct</h2><div class="grid3">'+ITERS.map(x=>{const d=it[x[0]]||{};return '<div class="panel"><div class="row between"><strong>'+x[1]+'</strong><span class="pill'+(d.done?" ok":"")+'">By '+x[2]+'</span></div><div class="small">'+esc(x[3])+'</div><label class="row small" style="gap:6px"><input type="checkbox" data-act="iter" data-k="'+x[0]+'"'+(d.done?" checked":"")+'> Shipped</label></div>'}).join("")+'</div>'
+    +'<div class="grid2"><label class="lab">App name'+inp("focus.deploy.app","")+'</label><label class="lab">Live URL'+inp("focus.deploy.url","https://")+'</label></div></div>';
+}
+const VIDSTAT=["To watch","Watching","Watched"];
+const VID={
+ web:{label:"Frontend and backend",ideas:["HTML and CSS crash course","JavaScript for beginners","React for beginners","REST API explained","Node.js and Express tutorial","SQL for beginners","Authentication explained","How to deploy a web app"]},
+ ai:{label:"AI and ML",ideas:["Machine learning explained simply","Supervised vs unsupervised learning","How large language models work","Prompt engineering","Embeddings and vector databases","RAG explained","AI agents explained","How to evaluate LLM apps"]}
+};
+function ytSearch(q){return "https://www.youtube.com/results?search_query="+encodeURIComponent(q)}
+function vVideos(k){
+  const V=VID[k],list=(S.videos&&S.videos[k])||[],done=list.filter(x=>x.status===2).length;
+  let h='<div class="sec"><div class="row between"><h2>'+V.label+' videos</h2><span class="pill'+(list.length&&done===list.length?" ok":" acc")+'">'+done+' of '+list.length+' watched</span></div>'
+    +(list.length?bar([{w:pct(done,list.length),c:"s4"}]):"")
+    +'<div class="small muted">Add each YouTube video you plan to watch. When you mark one as Watched, it is logged in today\'s Tracker automatically.</div>'
+    +'<div class="grid2"><label class="lab">Video title'+'<input type="text" id="vd-'+k+'-title" placeholder="Paste or type the title"></label><label class="lab">YouTube link<input type="text" id="vd-'+k+'-url" placeholder="https://www.youtube.com/watch?v="></label></div>'
+    +'<div><button class="btn primary" data-act="vdadd" data-a="'+k+'">Add to my list</button></div></div>';
+  h+='<div class="list">'+(list.length?list.map((x,i)=>'<div class="item"><div class="row between" style="flex-wrap:nowrap"><div class="grow"><strong>'+(/^https?:\/\//i.test(x.url||"")?'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">'+esc(x.title)+'</a>':esc(x.title))+'</strong></div>'
+      +'<select data-act="vdstat" data-k="'+k+'" data-i="'+i+'" aria-label="Status" style="width:auto">'+VIDSTAT.map((s,j)=>'<option value="'+j+'"'+((x.status||0)===j?" selected":"")+'>'+s+'</option>').join("")+'</select>'
+      +'<button class="btn ghost" data-act="vddel" data-a="'+k+'" data-i="'+i+'" aria-label="Remove video">&times;</button></div>'
+      +'<label class="lab">What I learned, optional'+inp("videos."+k+"."+i+".note","One or two lines in your own words")+'</label></div>').join(""):'<div class="muted">No videos yet. Find one below, then add it above.</div>')+'</div>';
+  h+='<div class="sec"><h3>Find videos on YouTube</h3><div class="small muted">Each button opens a YouTube search in a new tab.</div><div class="row">'+V.ideas.map(q=>'<a class="chip" style="text-decoration:none;color:inherit" href="'+ytSearch(q)+'" target="_blank" rel="noopener noreferrer">'+esc(q)+'</a>').join("")+'</div></div>';
+  return h;
+}
+function weekData(w0){
+  const t=today(),days=[];for(let i=0;i<7;i++)days.push(addDays(w0,i));const past=days.filter(d=>d<=t);
+  const learn=[];past.forEach(d=>["web","ai"].forEach(k=>learnOn(d,k).forEach(e=>learn.push(e.topic+(e.mins?" ("+e.mins+" min)":"")))));
+  return{
+    days,past,
+    pages:past.reduce((a,d)=>a+pagesOn(d),0),
+    habit:HAB.map(h=>[h,past.filter(d=>tDone(d,h[0])).length]),
+    steps:(S.track.steps||[]).filter(x=>x.done&&days.indexOf(x.doneOn)>=0).map(x=>x.text),
+    learn,
+    prac:PRAC.map(p=>[p[1],past.reduce((a,d)=>a+pracOn(d,p[0]),0)]),
+    emp:past.map(d=>empOn(d).type).filter(Boolean),
+    passed:S.log.filter(l=>l.type==="drill"&&days.indexOf(dstr(l.ts))>=0).map(l=>l.text)
+  };
+}
+function bl(arr,empty){return arr.length?'<ul class="blist small">'+arr.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>':'<div class="muted small">'+empty+'</div>'}
+function vWeekly(){
+  const t=today(),w0=addDays(mon(t),7*(ui.rwk||0)),D=weekData(w0),wi=weekInfo(w0),wk="w"+wi.wk;
+  const shallow=[];S.interviews.forEach(iv=>iv.qa.forEach(q=>{if((q.verdict||0)===2&&(q.imp||"").trim())shallow.push(iv.company+": "+qTitle(q)+". "+q.imp.trim())}));
+  const prTotal=D.prac.reduce((a,x)=>a+x[1],0);
+  let h='<div class="sec"><div class="row between"><div class="row"><button class="btn" data-act="rwk" data-a="-1" aria-label="Previous week">&larr;</button><h2>Week of '+fmtD(parseD(w0).getTime())+' to '+fmtD(parseD(addDays(w0,6)).getTime())+'</h2><button class="btn" data-act="rwk" data-a="1" aria-label="Next week">&rarr;</button></div>'+((ui.rwk||0)!==0?'<button class="btn ghost" data-act="rwk" data-a="0">This week</button>':'<span class="pill acc">This week</span>')+'</div>'
+    +'<div class="small muted">Filled in automatically from what you log in the Tracker, My app, Learn and Interviews.</div></div>';
+  h+='<div class="scores">'
+    +'<div class="score"><span class="small muted">Pages read</span><b>'+D.pages+'</b></div>'
+    +'<div class="score"><span class="small muted">App steps finished</span><b>'+D.steps.length+'</b></div>'
+    +'<div class="score"><span class="small muted">Learning sessions</span><b>'+D.learn.length+'</b></div>'
+    +'<div class="score"><span class="small muted">Practice questions</span><b>'+prTotal+'</b></div>'
+    +'<div class="score"><span class="small muted">Empathy activities</span><b>'+D.emp.length+'</b></div></div>';
+  h+='<div class="sec"><h3>Days each habit was done</h3><div class="list">'+D.habit.map(x=>'<div class="item" style="padding:8px 0"><div class="row between"><span class="row" style="gap:8px"><i class="dot on '+x[0][2]+'"></i>'+x[0][1]+'</span><span class="mono muted">'+x[1]+' of '+D.past.length+' days</span></div>'+bar([{w:pct(x[1],D.past.length),c:""}])+'</div>').join("")+'</div></div>';
+  h+='<div class="grid2"><div class="panel"><h3>What I learned</h3>'+bl(D.learn.concat(D.emp.map(e=>"User empathy: "+e)),"Nothing logged yet. Log a video or lesson in the Tracker.")+'</div>'
+    +'<div class="panel"><h3>What I built</h3>'+bl(D.steps,"No app steps finished yet this week.")+'</div>'
+    +'<div class="panel"><h3>Where I was shallow</h3><div class="small muted">From your interview feedback</div>'+bl(shallow,"No interview rows marked Needs work yet.")+'</div>'
+    +'<div class="panel"><h3>What I can defend</h3>'+bl(D.passed,"Nothing yet. Pass a Test me question in Learn or My app and it appears here.")+'</div></div>';
+  h+='<div class="sec"><h3>My own notes, optional</h3><div class="grid2">'
+    +'<label class="lab">Anything I want to add'+ta("weekly."+wk+".learned","",3)+'</label>'
+    +'<label class="lab">What I will show the PM mentor'+ta("weekly."+wk+".show","",3)+'</label></div>'
+    +'<label class="lab" style="max-width:220px">Week 1 begins<input type="date" id="startDate" data-act="start" value="'+esc(S.startDate)+'"></label></div>';
+  return h;
+}
+function bkJson(){return JSON.stringify({app:"pm-growth-os",version:1,exportedAt:new Date().toISOString(),data:S},null,1)}
+function vBackup(){
+  return (ui.msg?'<div class="notice" role="status">'+esc(ui.msg)+'</div>':"")+'<div class="sec"><h2>Back up your data</h2><div class="small muted">Right now your data is kept '+(docRef?"in your Claude account, with a copy on this device":"in this browser, on this device only")+'. Save a backup now and then. You can restore it on any device, and it does not depend on any account.</div>'
+    +'<div class="row"><button class="btn primary" data-act="bcopy">Copy backup</button><button class="btn" data-act="bsave">Save as file</button></div>'
+    +'<textarea id="bk-out" readonly rows="4" placeholder="Your backup text appears here after you copy it"></textarea></div>'
+    +'<div class="sec"><h2>Restore from a backup</h2><div class="small muted">Paste a backup below. Restoring replaces everything currently saved here.</div>'
+    +'<textarea id="bk-in" rows="5" placeholder="Paste a backup here"></textarea>'
+    +'<div class="row"><button class="btn'+(ui.bkConfirm?" primary":"")+'" data-act="brestore">'+(ui.bkConfirm?"Confirm: replace my data":"Restore")+'</button>'+(ui.bkConfirm?'<button class="btn ghost" data-act="bcancel">Cancel</button>':"")+'</div></div>';
+}
+function vLearn(){
+  const sub=ui.learnTab||"skills";
+  return head("Learn","Skills you can defend, YouTube videos for frontend, backend and AI, your course topics, and FirstClub notes.")+subChips("learnTab",[["skills","Skills"],["web","Frontend and backend"],["ai","AI and ML"],["course","Course"],["firstclub","FirstClub"]])
+    +(sub==="web"||sub==="ai"?vVideos(sub):noHead(sub==="course"?vCourse():sub==="firstclub"?vFirstclub():vLab()));
+}
+function vReviewHub(){
+  const sub=ui.reviewTab||"gaps";
+  if(sub==="mentor"&&!ui.mentor)ui.mentor=draftMentor();
+  return head("Review","Where you stand: the seven feedback gaps, your progress, the weekly review and the mentor update.")+subChips("reviewTab",[["gaps","Feedback gaps"],["progress","Progress"],["weekly","Weekly review"],["mentor","Mentor update"],["backup","Backup"]])
+    +(sub==="progress"?noHead(vReview()):sub==="weekly"?vWeekly():sub==="mentor"?noHead(vMentor()):sub==="backup"?vBackup():noHead(vDashboard()));
+}
+
+function coachPanel(){
+  const c=ui.coach;let h="";
+  if(!sample)return NO_SAMPLE;
+  h+='<div class="tabs" role="group" aria-label="Question type">'+CASE_TYPES.map(t=>'<button class="chip" aria-pressed="'+(c.type===t)+'" data-act="ctype" data-a="'+esc(t)+'"'+(c.status==="asking"||c.status==="grading"?" disabled":"")+'>'+t+'</button>').join("")+'</div>';
+  if(c.status==="idle"||c.status==="done")h+='<div><button class="btn primary" data-act="cask">'+(c.status==="done"?"Next question":"Ask me a question")+'</button></div>';
+  if(c.err)h+='<div class="notice err" role="alert">'+esc(c.err)+'</div>';
+  if(c.status==="asking")h+='<div class="muted">Preparing a question…</div>';
+  if(c.question&&c.status!=="asking"){
+    h+='<div class="panel"><div class="eyebrow">'+esc(c.type)+'</div><div class="quote">'+esc(c.question)+'</div>';
+    if(c.status==="answering"||c.status==="grading"){
+      h+='<textarea data-path="ui.coach.answer" rows="10" placeholder="Answer as you would in the interview. No hints are given before you submit."'+(c.status==="grading"?" disabled":"")+'>'+esc(c.answer)+'</textarea>'
+        +'<div class="row"><button class="btn primary" data-act="cgrade"'+(c.status==="grading"?" disabled":"")+'>'+(c.status==="grading"?"Evaluating…":"Submit answer")+'</button><button class="btn ghost" data-act="cskip"'+(c.status==="grading"?" disabled":"")+'>Skip this question</button></div>';
+    }else if(c.result){
+      const r=c.result;
+      h+='<div class="scores">'+DIMS.map(d=>'<div class="score"><span class="small muted">'+d[1]+'</span><b>'+(r.scores[d[0]]||0)+'<span class="muted small"> / 5</span></b></div>').join("")+'</div>'
+        +'<div class="grid2"><div><h3>Strongest</h3><div class="small">'+esc(r.strongest)+'</div></div><div><h3>Weakest</h3><div class="small">'+esc(r.weakest)+'</div></div></div>'
+        +'<div><h3>Notes</h3><div class="small">'+esc(r.notes)+'</div></div>'
+        +'<div><h3>Follow-ups an interviewer would ask next</h3><ul class="small">'+(r.probes||[]).map(p=>'<li>'+esc(p)+'</li>').join("")+'</ul></div>';
+    }
+    h+='</div>';
+  }
+  return h;
+}
+function vCoach(){
+  let h=head("Practice","One question at a time, graded after you answer. Scores are Claude's rating of what you wrote, from 1 (missing) to 5 (interview-ready).");
+  h+='<div class="sec">'+coachPanel()+'</div>';
+  h+='<div class="sec"><h2>History</h2>';
+  if(!S.cases.length)h+='<div class="muted">No cases yet. Your scores will appear here with the question and your answer.</div>';
+  else{
+    h+='<div class="scroll-x"><table style="border-collapse:collapse;width:100%;font-size:13px"><thead><tr><th style="text-align:left;padding:6px 8px" class="muted">Dimension</th><th class="muted num" style="padding:6px 8px;text-align:right">All cases</th><th class="muted num" style="padding:6px 8px;text-align:right">Last 3</th></tr></thead><tbody>'
+      +DIMS.map(d=>'<tr style="border-top:1px solid var(--line)"><td style="padding:6px 8px">'+d[1]+'</td><td class="num" style="padding:6px 8px;text-align:right">'+caseAvg(d[0]).toFixed(1)+'</td><td class="num" style="padding:6px 8px;text-align:right">'+caseAvg(d[0],3).toFixed(1)+'</td></tr>').join("")+'</tbody></table></div>';
+    h+='<div class="list">'+S.cases.slice().reverse().map(c=>'<details class="item"><summary><span class="mono">'+fmtD(c.ts)+'</span> &nbsp;'+esc(c.type)+' &nbsp;<span class="pill">mean '+dimMean(c.scores).toFixed(1)+'</span></summary><div class="quote small">'+esc(c.question)+'</div><div class="small"><strong>Your answer</strong><pre class="wrap">'+esc(c.answer)+'</pre></div><div class="small"><strong>Weakest:</strong> '+esc(c.weakest||"")+'</div></details>').join("")+'</div>';
+  }
+  return h+'</div>';
+}
+
+function skillRow(s){
+  const[id,name,ex]=s;const st=S.skills[id]||{stage:0,passes:[],built:""};const passes=(st.passes||[]).length;
+  const open=ui.openSkill===id;
+  const cls=["","","acc","acc","acc","ok"][st.stage]||"";
+  let h='<div class="item"><div class="row between"><div class="row grow"><button class="btn ghost" data-act="sk-open" data-a="'+id+'" aria-expanded="'+open+'">'+(open?"&minus;":"+")+'</button><h3>'+name+'</h3></div>'
+    +'<div class="row"><span class="mono muted">'+passes+' follow-ups passed</span><span class="pill '+cls+'">'+STAGES[st.stage||0]+'</span></div></div>';
+  if(open){
+    h+='<div class="panel"><div class="small"><span class="muted">In your app:</span> '+esc(ex)+'</div>'
+      +'<div class="grid2"><label class="lab">Stage<select data-act="sk-stage" data-a="'+id+'">'+STAGES.map((l,i)=>'<option value="'+i+'"'+((st.stage||0)===i?" selected":"")+'>'+l+'</option>').join("")+'</select></label>'
+      +'<label class="lab">Where I built it in my app (needed from Built independently)'+inp("skills."+id+".built","Repo, file or commit")+'</label></div>'
+      +'<div class="small muted">Can explain in interview needs a build note and 3 passed follow-up questions. Course topics never move a skill up.</div>'
+      +drillBlock("skill",id,name,ex)+'</div>';
+  }
+  return h+'</div>';
+}
+function drillBlock(kind,id,name,ctx){
+  if(!sample)return NO_SAMPLE;
+  const d=ui.drill&&ui.drill.kind===kind&&ui.drill.id===id?ui.drill:null;
+  let h="";
+  if(!d||d.status==="done")h+='<div class="row"><button class="btn primary" data-act="drill" data-k="'+kind+'" data-a="'+id+'">'+(d?"Test me again":"Test me")+'</button></div>';
+  if(d){
+    if(d.err)h+='<div class="notice err" role="alert">'+esc(d.err)+'</div>';
+    if(d.status==="asking")h+='<div class="muted">Preparing a follow-up…</div>';
+    if(d.question)h+='<div class="quote">'+esc(d.question)+'</div>';
+    if(d.status==="answering"||d.status==="grading")h+='<textarea data-path="ui.drill.answer" rows="6" placeholder="Your answer"'+(d.status==="grading"?" disabled":"")+'>'+esc(d.answer||"")+'</textarea><div class="row"><button class="btn primary" data-act="dgrade"'+(d.status==="grading"?" disabled":"")+'>'+(d.status==="grading"?"Evaluating…":"Submit")+'</button></div>';
+    if(d.result)h+='<div class="panel"><div class="row"><span class="pill '+(d.result.pass?"ok":"warn")+'">'+(d.result.pass?"Passed":"Not yet")+'</span></div><div class="small">'+esc(d.result.feedback)+'</div>'+((d.result.gaps||[]).length?'<ul class="small">'+d.result.gaps.map(g=>'<li>'+esc(g)+'</li>').join("")+'</ul>':"")+'</div>';
+  }
+  return h;
+}
+function vLab(){
+  const counts=STAGES.map((_,i)=>SKILLS.filter(s=>((S.skills[s[0]]||{}).stage||0)===i).length);
+  let h=head("Technical lab","Each concept is tied to your own app and tested with a follow-up question you answer from memory.");
+  if(ui.msg)h+='<div class="notice" role="status">'+esc(ui.msg)+'</div>';
+  h+='<div class="row mono muted">'+STAGES.map((s,i)=>s+" "+counts[i]).join(" &nbsp;·&nbsp; ")+'</div>';
+  h+='<div class="list">'+SKILLS.map(skillRow).join("")+'</div>';
+  h+='<div class="sec"><h3>Questions asked of every feature</h3><div class="small muted">'+TECH_Q.join(" · ")+'</div></div>';
+  return h;
+}
+
+function vFirstclub(){
+  const sf=SURFACES.find(s=>s.id===ui.surface)||SURFACES[0];
+  const filled=id=>SFIELDS.filter(f=>((S.surfaces[id]||{})[f[0]]||"").trim()).length;
+  let h=head("FirstClub lab","A written knowledge base for each surface. Fill every field from what you have seen in data and in the app.");
+  h+='<div class="tabs" role="group" aria-label="Surface">'+SURFACES.map(s=>'<button class="chip" aria-pressed="'+(s.id===sf.id)+'" data-act="surf" data-a="'+s.id+'">'+s.name+' <span class="num">'+filled(s.id)+'/'+SFIELDS.length+'</span></button>').join("")+'</div>';
+  h+='<div class="sec"><h2>'+sf.name+'</h2><div class="small muted">Under-the-UI trace to try: '+esc(sf.act)+'</div><div class="grid2">'
+    +SFIELDS.map(f=>'<label class="lab" style="'+(f[0]==="keep"?"":"")+'">'+f[1]+ta("surfaces."+sf.id+"."+f[0],"",3)+'</label>').join("")+'</div></div>';
+  return h;
+}
+
+function projDone(id){const p=S.projects[id]||{items:{}};return PITEMS.filter(i=>(p.items||{})[i[0]]&&p.items[i[0]].done).length}
+function vBuild(){
+  let h=head("Build lab","Your app as a project. Interview ready needs every checklist item done and two passed defense questions.");
+  if(ui.msg)h+='<div class="notice" role="status">'+esc(ui.msg)+'</div>';
+  PROJECTS.forEach(p=>{
+    const st=S.projects[p.id]||{items:{},passes:[]};const n=projDone(p.id);const ps=(st.passes||[]).length;
+    const ready=n===PITEMS.length&&ps>=2;
+    h+='<div class="sec"><div class="row between"><h2>'+p.name+'</h2><span class="pill '+(ready?"ok":n?"acc":"")+'">'+(ready?"Interview ready":n?"In progress":"Not started")+'</span></div>'
+      +'<div class="small">'+esc(p.scope)+'</div><div class="small muted">Concepts: '+esc(p.learn)+'</div>'
+      +'<div class="row"><div class="grow">'+bar([{w:pct(n,PITEMS.length)}])+'</div><span class="mono">'+n+' of '+PITEMS.length+' items · '+ps+' of 2 defenses</span></div>'
+      +'<div class="list">'+PITEMS.map(i=>{const it=(st.items||{})[i[0]]||{};return '<div class="item"><div class="track"><input type="checkbox" data-act="pitem" data-a="'+p.id+'" data-k="'+i[0]+'"'+(it.done?" checked":"")+' aria-label="'+i[1]+' done"><div style="display:flex;flex-direction:column;gap:6px;min-width:0"><strong>'+i[1]+'</strong>'+inp("projects."+p.id+".items."+i[0]+".note","Link or one line on what exists")+'</div></div></div>'}).join("")+'</div>'
+      +drillBlock("project",p.id,p.name,p.scope)+'</div>';
+  });
+  return h;
+}
+
+function mentorWindow(){const last=S.mentor.length?S.mentor[S.mentor.length-1].ts:Date.now()-14*864e5;return last}
+function draftMentor(){
+  const since=mentorWindow();const L=S.log.filter(l=>l.ts>since);
+  const tasks=k=>L.filter(l=>l.type==="task:"+k).map(l=>"- "+l.text);
+  const days=[];for(let d=dstr(since);d<=today();d=addDays(d,1))days.push(d);
+  const pg=days.reduce((a,d)=>a+pagesOn(d),0),extra=[];
+  if(pg)extra.push("- Read "+pg+" pages"+((S.focus.book.title||"").trim()?" of "+S.focus.book.title.trim():""));
+  const pr=PRAC.map(x=>[x[1],days.reduce((a,d)=>a+pracOn(d,x[0]),0)]).filter(x=>x[1]);
+  if(pr.length)extra.push("- Practice questions: "+pr.map(x=>x[0]+" "+x[1]).join(", "));
+  const learned=extra.concat(tasks("tech")).concat(tasks("ui")).join("\n");
+  const built=tasks("build").concat(L.filter(l=>l.type==="project").map(l=>"- "+l.text)).join("\n");
+  const ev=L.filter(l=>l.type==="evidence").map(l=>"- "+l.text).concat(tasks("product")).join("\n");
+  const cs=S.cases.filter(c=>c.ts>since);
+  let weak=[];
+  if(S.cases.length){const arr=DIMS.map(d=>[d[1],caseAvg(d[0])]).sort((a,b)=>a[1]-b[1]).slice(0,2);weak.push("- Lowest case scores: "+arr.map(a=>a[0]+" ("+a[1].toFixed(1)+")").join(", "))}
+  const gaps=FEEDBACK.filter(f=>((S.feedback[f.id]||{}).level||0)===0).map(f=>f.name);
+  if(gaps.length)weak.push("- Feedback items still at Gap: "+gaps.join(", "));
+  const ns=SKILLS.filter(s=>((S.skills[s[0]]||{}).stage||0)===0).length;weak.push("- "+ns+" of "+SKILLS.length+" technical skills not started");const oa=actionTotals();if(oa[1]-oa[0])weak.push("- "+(oa[1]-oa[0])+" interview practice items still open");
+  const improved=cs.length&&S.cases.length>cs.length?"- Case mean this period "+(cs.reduce((a,c)=>a+dimMean(c.scores),0)/cs.length).toFixed(1)+" vs "+(S.cases.filter(c=>c.ts<=since).reduce((a,c)=>a+dimMean(c.scores),0)/S.cases.filter(c=>c.ts<=since).length).toFixed(1)+" before":(cs.length?"- "+cs.length+" case(s) this period, mean "+(cs.reduce((a,c)=>a+dimMean(c.scores),0)/cs.length).toFixed(1):"");
+  const shown=ev?ev+"\n"+improved:improved;
+  return{learned,built,improved:shown.trim(),weak:weak.join("\n"),question:""};
+}
+function vMentor(){
+  let h=head("Mentor updates","A draft built from what you logged since the last update. Edit it, then save a copy to send.");
+  if(ui.msg)h+='<div class="notice" role="status">'+esc(ui.msg)+'</div>';
+  h+='<div class="row"><button class="btn primary" data-act="mdraft">Draft update from my log</button><span class="mono muted">Covers since '+fmtD(mentorWindow())+'</span></div>';
+  if(ui.mentor){
+    const m=ui.mentor;
+    h+='<div class="sec">'+[["learned","What I learned"],["built","What I built"],["improved","What improved"],["weak","What is still weak"]].map(f=>'<label class="lab">'+f[1]+'<textarea data-path="ui.mentor.'+f[0]+'" rows="5" placeholder="Nothing logged for this section yet. Add it yourself.">'+esc(m[f[0]])+'</textarea></label>').join("")
+      +'<label class="lab">One precise question for my PM mentor<textarea data-path="ui.mentor.question" id="mq" rows="3" placeholder="Narrow and specific, for example: I mapped referral attribution like this. Where is my technical reasoning still shallow?">'+esc(m.question)+'</textarea></label>'
+      +'<div class="row">'+(sample?'<button class="btn" data-act="mq">Suggest a question</button>':"")+'<button class="btn primary" data-act="msave">Save update</button><button class="btn" data-act="mcopy">Copy text</button></div></div>';
+  }
+  h+='<div class="sec"><h2>Past updates</h2>';
+  if(!S.mentor.length)h+='<div class="muted">None saved yet.</div>';
+  else h+='<div class="list">'+S.mentor.slice().reverse().map(m=>'<details class="item"><summary class="mono">'+fmtD(m.ts)+'</summary><pre class="wrap small">'+esc(mentorText(m))+'</pre></details>').join("")+'</div>';
+  return h+'</div>';
+}
+function mentorText(m){return "What I learned\n"+m.learned+"\n\nWhat I built\n"+m.built+"\n\nWhat improved\n"+m.improved+"\n\nWhat is still weak\n"+m.weak+"\n\nQuestion for mentor\n"+m.question}
+
+function vReview(){
+  const wi=weekInfo(today());const elapsed=Math.max(0,Math.min(daysBetween(S.startDate,today())+1,56));
+  let tasksDone=0;Object.keys(S.daily).forEach(d=>{const x=S.daily[d];["product","tech","build","ui"].forEach(k=>{if(x[k]&&x[k].done)tasksDone++})});
+  const expected=elapsed*4;
+  const skillCounts=STAGES.map((_,i)=>SKILLS.filter(s=>((S.skills[s[0]]||{}).stage||0)===i).length);
+  const pDone=PROJECTS.reduce((a,p)=>a+projDone(p.id),0),pTot=PROJECTS.length*PITEMS.length;
+  const pReady=PROJECTS.filter(p=>projDone(p.id)===PITEMS.length&&((S.projects[p.id]||{}).passes||[]).length>=2).length;
+  const sFilled=SURFACES.reduce((a,s)=>a+SFIELDS.filter(f=>(((S.surfaces[s.id]||{})[f[0]])||"").trim()).length,0),sTot=SURFACES.length*SFIELDS.length;
+  const wkRev=Object.keys(S.weekly).filter(k=>{const w=S.weekly[k];return w&&(w.learned||w.shallow||w.defend||w.show)}).length;
+  const fbEv=Object.values(S.feedback).reduce((a,f)=>a+((f.evidence||[]).length),0);
+  const iat=actionTotals();
+  const row=(label,a,b,unit)=>'<div class="item"><div class="row between"><span>'+label+'</span><span class="num">'+a+' of '+b+(unit?" "+unit:"")+'</span></div>'+bar([{w:pct(a,b)}])+'</div>';
+  let h=head("Progress review","Every figure is a count of completed work. Nothing here is a score I made up.");
+  h+='<div class="row mono muted">Week '+wi.wk+' of 8 · plan started '+S.startDate+' · '+elapsed+' day(s) elapsed</div>';
+  h+='<div class="list">'
+    +row("Daily tasks completed, to date",tasksDone,expected||0)
+    +row("Weekly reviews written",wkRev,Math.max(1,Math.min(8,wi.wk)))
+    +row("Project checklist items done",pDone,pTot)
+    +row("Projects interview ready",pReady,PROJECTS.length)
+    +row("Interview practice items done",iat[0],iat[1])
+    +row("FirstClub surface fields filled",sFilled,sTot)
+    +'<div class="item"><div class="row between"><span>Technical skills by stage</span><span class="mono muted">'+STAGES.map((s,i)=>skillCounts[i]).join(" / ")+'</span></div>'
+    +bar(skillCounts.map((c,i)=>({w:pct(c,SKILLS.length),c:"s"+i}))).replace('class="s0"','')
+    +'<div class="row mono muted">'+STAGES.map((s,i)=>s).join(" · ")+'</div></div>'
+    +'</div>';
+  const cn=k=>(S.app.log||[]).filter(l=>l.kind===k).length;
+  const vShipped=VERS.filter(v=>((S.app.versions||{})[v[0]]||{}).status===2).length;
+  const ctAll=COURSE.reduce((a,w)=>a+w[2].length,0);let ctL=0,ctA=0;COURSE.forEach((w,wi)=>w[2].forEach((t,ti)=>{const x=((S.course.topics||{})["w"+wi+"t"+ti])||0;if(x===1)ctL++;if(x===2)ctA++}));
+  h+='<div class="sec"><h2>App progress</h2><div class="row mono muted">'+vShipped+' of '+VERS.length+' versions shipped · '+cn("feature")+' features · '+cn("user")+' users tested · '+cn("bug")+' bugs fixed · '+cn("api")+' APIs · '+cn("db")+' DB work · '+cn("deploy")+' deployments · '+cn("analytics")+' analytics · '+cn("ai")+' AI features · '+skillCounts[5]+' skills explainable in interview</div></div>'
+    +'<div class="sec"><h2>Course progress</h2><div class="row mono muted">'+Object.values(S.course.sessions||{}).filter(Boolean).length+' of '+COURSE.length+' sessions · '+(ctL+ctA)+' of '+ctAll+' topics learned · '+ctA+' applied to the app · '+ctL+' understood but not used yet</div></div>';
+  h+='<div class="sec"><h2>Case coach</h2>';
+  if(!S.cases.length)h+='<div class="muted">No cases answered yet.</div>';
+  else h+='<div class="scroll-x"><table style="border-collapse:collapse;width:100%;font-size:13px"><thead><tr><th style="text-align:left;padding:6px 8px" class="muted">'+S.cases.length+' cases</th><th class="muted" style="padding:6px 8px;text-align:right">First 3</th><th class="muted" style="padding:6px 8px;text-align:right">Last 3</th></tr></thead><tbody>'+DIMS.map(d=>{const f=S.cases.slice(0,3),l=S.cases.slice(-3);const m=a=>(a.reduce((x,c)=>x+(+c.scores[d[0]]||0),0)/a.length).toFixed(1);return '<tr style="border-top:1px solid var(--line)"><td style="padding:6px 8px">'+d[1]+'</td><td class="num" style="padding:6px 8px;text-align:right">'+m(f)+'</td><td class="num" style="padding:6px 8px;text-align:right">'+m(l)+'</td></tr>'}).join("")+'</tbody></table></div>';
+  h+='</div>';
+  h+='<div class="sec"><h2>Evidence log</h2><div class="small muted">'+fbEv+' feedback evidence entries · '+S.log.length+' logged activities. Most recent first.</div>';
+  h+=S.log.length?'<div class="list">'+S.log.slice(-20).reverse().map(l=>'<div class="item small"><span class="mono muted">'+fmtD(l.ts)+' · '+esc(l.type.replace("task:","task "))+'</span><span>'+esc(l.text)+'</span></div>').join("")+'</div>':'<div class="muted">Nothing logged yet.</div>';
+  return h+'</div>';
+}
+
+/* ---------- render ---------- */
+const VIEWS={tracker:vTracker,app:vApp,interviews:vInterviews,practice:vCoach,learn:vLearn,review:vReviewHub};
+function render(){
+  const main=document.getElementById("main");
+  const sy=window.scrollY;
+  const ae=document.activeElement;const aid=ae&&ae.id,apath=ae&&ae.dataset&&ae.dataset.path;
+  const ss=ae&&"selectionStart" in ae?ae.selectionStart:null;
+  main.innerHTML=(VIEWS[ui.tab]||vTracker)();
+  document.getElementById("nav").innerHTML=navHtml();
+  const wi=weekInfo(today());document.getElementById("wk").textContent="Week "+wi.wk+" of 8 · December re-round";
+  ui.msg="";
+  let el=null;if(aid)el=document.getElementById(aid);else if(apath)el=main.querySelector('[data-path="'+apath+'"]');
+  if(el){el.focus();if(ss!=null&&el.setSelectionRange)try{el.setSelectionRange(ss,ss)}catch(e){}}
+  window.scrollTo(0,sy);
+}
+function route(){const h=location.hash.replace("#","");ui.tab=VIEWS[h]?h:"tracker";ui.msg="";ui.drill=null;render();window.scrollTo(0,0)}
+
+/* ---------- events ---------- */
+document.addEventListener("input",e=>{const p=e.target.dataset&&e.target.dataset.path;if(p)setP(p,e.target.value)});
+document.addEventListener("change",e=>{
+  const t=e.target,a=t.dataset&&t.dataset.act;if(!a)return;
+  if(a==="fb-level"){const id=t.dataset.a,lv=+t.value;const ev=((S.feedback[id]||{}).evidence||[]).length;
+    if(lv>=2&&ev<1){say("Add at least one evidence entry before marking this as "+LEVELS[lv]+".");return}
+    if(lv===3&&ev<3){say("Consistent needs at least 3 evidence entries. You have "+ev+".");return}
+    if(!S.feedback[id])S.feedback[id]={level:0,evidence:[]};S.feedback[id].level=lv;schedule();render()}
+  if(a==="task"){const k=t.dataset.a,d=ui.date;const note=(getP("daily."+d+"."+k+".note")||"").trim();
+    setP("daily."+d+"."+k+".done",t.checked);
+    if(t.checked&&note)log("task:"+k,note,CORE[k]);
+    render()}
+  if(a==="rerender"){render();return}
+  if(a==="tpages"){setP("track.pages."+(ui.tday||today()),Math.max(0,parseInt(t.value,10)||0));render();return}
+  if(a==="tstep"){const st=S.track.steps[+t.dataset.k],d=ui.tday||today();st.done=t.checked;st.doneOn=t.checked?d:"";schedule();if(t.checked)log("task:build","App step: "+st.text,["building"]);render();return}
+  if(a==="tworked"){setP("track.appWorked."+(ui.tday||today()),t.checked);render();return}
+  if(a==="vdstat"){const k=t.dataset.k,i=+t.dataset.i,v=S.videos[k][i];v.status=+t.value;
+    if(v.status===2&&!v.logged){v.logged=true;const d=today();setP("track.learn."+d+"."+k,learnOn(d,k).concat([{topic:"Watched: "+v.title,mins:0,link:v.url||""}]));log("task:tech","Watched: "+v.title,["tech"]);ui.msg="Logged in today's Tracker."}
+    schedule();render();return}
+  if(a==="isent"){S.interviews[ivIdx()].sentiment=+t.value;schedule();render();return}
+  if(a==="iouts"){S.interviews[ivIdx()].outcome=+t.value;schedule();render();return}
+  if(a==="iact"){S.interviews[ivIdx()].actions[+t.dataset.k].done=t.checked;schedule();render();return}
+  if(a==="vstat"){const k=t.dataset.k,v=+t.value;const note=(getP("app.versions."+k+".note")||"").trim();
+    if(v===2&&note.length<8){say("Say what shipped, with a link, before marking this version Shipped.");render();return}
+    setP("app.versions."+k+".status",v);if(v===2)log("app:version",VERS.find(x=>x[0]===k)[1]+" shipped: "+note,["building"]);render();return}
+  if(a==="csess"){setP("course.sessions.s"+t.dataset.k,t.checked);render();return}
+  if(a==="ctopic"){const v=+t.value,w=t.dataset.w;
+    if(v===2&&(getP("course.notes.w"+w)||"").trim().length<10){say("Write in the notes how you applied it to your app before marking it Applied.");render();return}
+    setP("course.topics."+t.dataset.k,v);render();return}
+  if(a==="iter"){const k=t.dataset.k;setP("focus.deploy.iters."+k+".done",t.checked);if(t.checked)log("task:build",ITERS.find(x=>x[0]===k)[1]+" shipped",["building"]);render();return}
+  if(a==="dstep"){const k=t.dataset.k;const note=(getP("focus.deploy.steps."+k+".note")||"").trim();
+    setP("focus.deploy.steps."+k+".done",t.checked);if(t.checked)log("task:build","Deploy: "+DEPLOY.find(x=>x[0]===k)[1]+(note?" ("+note+")":""),["building"]);render();return}
+  if(a==="start"){if(t.value){S.startDate=t.value;schedule();render()}}
+  if(a==="sk-stage"){const id=t.dataset.a,v=+t.value;const st=S.skills[id]||(S.skills[id]={stage:0,passes:[],built:""});
+    if(v>=3&&!(st.built||"").trim()){say("Add where you built it in your app before marking Built independently.");render();return}
+    if(v===5&&(st.passes||[]).length<3){say("Can explain in interview needs 3 passed follow-up questions. You have "+(st.passes||[]).length+". Use Test me.");render();return}
+    st.stage=v;schedule();render()}
+  if(a==="pitem"){const id=t.dataset.a,k=t.dataset.k;setP("projects."+id+".items."+k+".done",t.checked);if(t.checked){const nm=PITEMS.find(i=>i[0]===k)[1];log("project",PROJECTS.find(p=>p.id===id).name+": "+nm+" done"+(getP("projects."+id+".items."+k+".note")?" ("+getP("projects."+id+".items."+k+".note")+")":""),["building"])}render()}
+});
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-act]");if(!t||t.tagName==="SELECT"||t.type==="checkbox"||t.type==="date")return;
+  const a=t.dataset.act,v=t.dataset.a;
+  if(a==="nav"){ui.tab=VIEWS[v]?v:"tracker";if(t.dataset.s)ui.learnTab=t.dataset.s;ui.msg="";ui.drill=null;try{history.replaceState(null,"","#"+ui.tab)}catch(err){}render();window.scrollTo(0,0)}
+  else if(a==="vdadd"){const tt=(document.getElementById("vd-"+v+"-title").value||"").trim(),u=(document.getElementById("vd-"+v+"-url").value||"").trim();
+    if(tt.length<3)say("Type the video title first.");
+    else{S.videos[v]=(S.videos[v]||[]).concat([{title:tt,url:/^https?:\/\//i.test(u)?u:"",status:0,note:"",logged:false}]);schedule();render()}}
+  else if(a==="vddel"){S.videos[v].splice(+t.dataset.i,1);schedule();render()}
+  else if(a==="rwk"){ui.rwk=v==="0"?0:(ui.rwk||0)+(+v);render()}
+  else if(a==="bcopy"){const out=document.getElementById("bk-out");out.value=bkJson();out.focus();out.select();
+    try{await navigator.clipboard.writeText(out.value);ui.msg="Backup copied. Paste it somewhere safe, such as a note to yourself."}catch(err){ui.msg="Copy was blocked here. The backup text is selected: copy it by hand."}
+    const keep=out.value;render();const o2=document.getElementById("bk-out");if(o2)o2.value=keep}
+  else if(a==="bsave"){const name="pm-growth-os-backup-"+today()+".json",json=bkJson();let ok=false;
+    try{const d=window.claude&&window.claude.use?await window.claude.use("downloads"):null;if(d){await d.save({filename:name,data:json});ok=true}}catch(err){}
+    if(!ok){try{const u=URL.createObjectURL(new Blob([json],{type:"application/json"})),el=document.createElement("a");el.href=u;el.download=name;document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);ok=true}catch(err){}}
+    say(ok?"Backup file requested. If nothing downloaded, use Copy backup instead.":"Could not save a file here. Use Copy backup instead.")}
+  else if(a==="bcancel"){ui.bkConfirm=false;render()}
+  else if(a==="brestore"){const txt=(document.getElementById("bk-in").value||"").trim();let obj=null;
+    try{obj=JSON.parse(txt)}catch(err){}
+    const data=obj&&(obj.data||obj);
+    if(!data||typeof data!=="object"||!("interviews" in data||"track" in data||"cases" in data))say("That does not look like a backup. Paste the full text you copied.");
+    else if(!ui.bkConfirm){ui.bkConfirm=true;ui.bkPending=data;render();const b=document.getElementById("bk-in");if(b)b.value=txt}
+    else{S=merge(DEF(),clone(ui.bkPending||data));ui.bkConfirm=false;ui.bkPending=null;localSave();dirty=true;flush();say("Restored. Everything now matches the backup.")}}
+  else if(a==="sub"){ui[t.dataset.k]=v;ui.msg="";ui.drill=null;render()}
+  else if(a==="jump"){const el=document.getElementById(v);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}
+  else if(a==="rlog"){const pg=parseInt(document.getElementById("rd-pages").value,10)||0,tk=document.getElementById("rd-take").value.trim(),ap=document.getElementById("rd-apply").value.trim();
+    if(pg<1)say("Enter how many pages you read.");
+    else if(tk.length<10)say("Write one takeaway in your own words, at least a short sentence.");
+    else{const bk=S.focus.book;bk.log=(bk.log||[]).concat([{date:ui.date,pages:pg,takeaway:tk,apply:ap}]);setP("track.pages."+ui.date,pagesOn(ui.date)+pg);log("reading",pg+" pages"+(bk.title?" of "+bk.title:"")+": "+tk,["empathy","depth","rehearsed"]);render()}}
+  else if(a==="tday"){ui.tday=v;render()}
+  else if(a==="tgo"){ui.tday=today();ui.tmon=0;render()}
+  else if(a==="tstep1"){const d=addDays(ui.tday||today(),+v);ui.tday=d;const b=parseD(today());const dd=parseD(d);ui.tmon=(dd.getFullYear()-b.getFullYear())*12+dd.getMonth()-b.getMonth();render()}
+  else if(a==="tmon"){ui.tmon=(ui.tmon||0)+(+v);render()}
+  else if(a==="tpg"){const d=ui.tday||today();setP("track.pages."+d,pagesOn(d)+(+v));render()}
+  else if(a==="tsadd"){const x=(document.getElementById("ts-text").value||"").trim();if(!x)say("Type the step first.");else{S.track.steps=(S.track.steps||[]).concat([{text:x,done:false,doneOn:""}]);schedule();render()}}
+  else if(a==="tsdeploy"){S.track.steps=(S.track.steps||[]).concat(DEPLOY.map(x=>({text:x[1],done:false,doneOn:""})));schedule();render()}
+  else if(a==="tsdel"){S.track.steps.splice(+v,1);schedule();render()}
+  else if(a==="tchip"){const el=document.getElementById("tl-"+v+"-topic");if(el)el.value=t.dataset.t;if(el)el.focus()}
+  else if(a==="tladd"){const d=ui.tday||today(),tp=(document.getElementById("tl-"+v+"-topic").value||"").trim();
+    if(tp.length<3)say("Write what you learned, or tap one of the topics.");
+    else{const ms=parseInt(document.getElementById("tl-"+v+"-mins").value,10)||0,lk=(document.getElementById("tl-"+v+"-link").value||"").trim();
+      setP("track.learn."+d+"."+v,learnOn(d,v).concat([{topic:tp,mins:ms,link:lk}]));log("task:tech",LEARN[v].title+": "+tp+(ms?" ("+ms+" min)":""),["tech"]);render()}}
+  else if(a==="tldel"){const d=ui.tday||today(),arr=learnOn(d,v).slice();arr.splice(+t.dataset.i,1);setP("track.learn."+d+"."+v,arr);render()}
+  else if(a==="tprac"){const d=ui.tday||today();setP("track.prac."+d+"."+v,Math.max(0,pracOn(d,v)+(+t.dataset.d)));render()}
+  else if(a==="temp"){const d=ui.tday||today();const cur=empOn(d).type;setP("track.emp."+d+".type",cur===v?"":v);if(cur!==v)log("task:product","User empathy: "+v,["empathy"]);render()}
+  else if(a==="ipick"){ui.iv=v;ui.cdel=null;ui.ivEdit=false;ui.ivAdd=false;render()}
+  else if(a==="iaddtoggle"){ui.ivAdd=!ui.ivAdd;render()}
+  else if(a==="iedit"){ui.ivEdit=!ui.ivEdit;ui.cdel=null;render()}
+  else if(a==="irate"){const iv=S.interviews[ivIdx()];iv.rating=(iv.rating===+v)?0:+v;schedule();render()}
+  else if(a==="iverd"){S.interviews[ivIdx()].qa[+t.dataset.q].verdict=+v;schedule();render()}
+  else if(a==="iadd"){const el=document.getElementById("nv-company"),c=(el.value||"").trim();
+    if(!c)say("Type the company name first.");else{const iv=newIv({company:c});S.interviews.push(iv);ui.iv=iv.id;ui.ivAdd=false;ui.ivEdit=true;schedule();render()}}
+  else if(a==="iqadd"){S.interviews[ivIdx()].qa.push({q:"",a:"",fb:"",imp:"",tags:[]});schedule();render()}
+  else if(a==="iqdel"){if(ui.cdel==="q"+v){S.interviews[ivIdx()].qa.splice(+v,1);ui.cdel=null;schedule()}else ui.cdel="q"+v;render()}
+  else if(a==="itag"){const q=S.interviews[ivIdx()].qa[+t.dataset.q];q.tags=q.tags||[];const j=q.tags.indexOf(v);if(j>=0)q.tags.splice(j,1);else q.tags.push(v);schedule();render()}
+  else if(a==="iaadd"){const el=document.getElementById("ia-text"),x=(el.value||"").trim();if(!x)say("Type what you want to practice.");else{S.interviews[ivIdx()].actions.push({text:x,done:false});schedule();render()}}
+  else if(a==="iadel"){S.interviews[ivIdx()].actions.splice(+v,1);schedule();render()}
+  else if(a==="idel"){if(ui.cdel==="iv"){S.interviews.splice(ivIdx(),1);ui.cdel=null;ui.ivEdit=false;schedule()}else ui.cdel="iv";render()}
+  else if(a==="irecap")recapIv();
+  else if(a==="cw-open"){ui.openCourse=ui.openCourse===+v?-1:+v;render()}
+  else if(a==="alog"){const kind=document.getElementById("al-kind").value,tx=document.getElementById("al-text").value.trim();
+    if(tx.length<8)say("Describe what happened in at least a short sentence.");
+    else{S.app.log=(S.app.log||[]).concat([{ts:Date.now(),kind,text:tx.slice(0,300)}]);log("app:"+kind,tx,["building"]);render()}}
+  else if(a==="fb-open"){ui.openFb=ui.openFb===v?null:v;render()}
+  else if(a==="fb-add"){const el=document.getElementById("ev-"+v),x=(el.value||"").trim();if(x.length<10){say("Describe the evidence in at least a short sentence.");return}
+    if(!S.feedback[v])S.feedback[v]={level:0,evidence:[]};if(!S.feedback[v].evidence)S.feedback[v].evidence=[];S.feedback[v].evidence.push({ts:Date.now(),text:x});log("evidence",FEEDBACK.find(f=>f.id===v).name+": "+x,[v]);render()}
+  else if(a==="day"){ui.date=v==="0"?today():addDays(ui.date,+v);render()}
+  else if(a==="sk-open"){ui.openSkill=ui.openSkill===v?null:v;ui.drill=null;render()}
+  else if(a==="surf"){ui.surface=v;render()}
+  else if(a==="ctype"){ui.coach.type=v;render()}
+  else if(a==="cask")askCase();
+  else if(a==="cgrade")gradeCase();
+  else if(a==="cskip"){ui.coach=Object.assign(ui.coach,{status:"idle",question:"",answer:"",result:null,err:""});render()}
+  else if(a==="drill")askDrill(t.dataset.k,v);
+  else if(a==="dgrade")gradeDrill();
+  else if(a==="mdraft"){ui.mentor=draftMentor();render()}
+  else if(a==="mq")suggestQ();
+  else if(a==="msave"){const m=ui.mentor;if(!m.question.trim()){say("Add the question for your mentor first.");return}S.mentor.push(Object.assign({ts:Date.now()},clone(m)));ui.mentor=null;schedule();say("Update saved.")}
+  else if(a==="mcopy"){const txt=mentorText(ui.mentor);try{await navigator.clipboard.writeText(txt);say("Copied.")}catch(err){const el=document.getElementById("mq");say("Copy was blocked. Select the text in each box and copy it.")}}
+});
+window.addEventListener("hashchange",route);
+
+/* ---------- Claude flows ---------- */
+async function askCase(){
+  const c=ui.coach;c.status="asking";c.err="";c.result=null;c.answer="";render();
+  const recent=S.cases.slice(-5).map(x=>x.question).join("\n- ");
+  try{
+    const r=await askJson("You are a demanding product-management interviewer preparing a candidate for a re-round at FirstClub.\n"+FC_CONTEXT+"\nWrite ONE interview question of type: "+c.type+". It must be realistic, specific to FirstClub, and answerable in 10 minutes. Do not include hints, frameworks, sub-bullets or the expected answer. For RCA, state the metric movement with plausible figures. For technical product, ask about a concrete feature.\nAvoid repeating these earlier questions:\n- "+(recent||"none")+"\nReply with only JSON: {\"question\": \"...\"}","quick");
+    c.question=String(r.question||"");c.status=c.question?"answering":"idle";if(!c.question)c.err="No question came back. Try again.";
+  }catch(e){c.status="idle";c.err=errCopy(e)}
+  render();
+}
+async function gradeCase(){
+  const c=ui.coach;if((c.answer||"").trim().length<40){c.err="Write a fuller answer before submitting.";render();return}
+  c.status="grading";c.err="";render();
+  try{
+    const r=await askJson("You are a demanding product-management interviewer. The candidate has these known gaps: solves from own lens, scattered structure, stops at first-order answers, thin technical depth, sounds framework-recited.\nQuestion type: "+c.type+"\nQuestion: "+c.question+"\n\nCandidate answer:\n"+c.answer.slice(0,8000)+"\n\nScore ONLY what is written, 1 to 5 each (1 missing, 3 competent, 5 interview-ready; do not inflate; a missing dimension is 1). Dimensions: empathy (names a behavioral user, context, evidence vs assumption), structure (listener always knows problem, user, priority, first move), prioritization (picks one problem and justifies it), depth (alternatives rejected, edge cases, what V1 excludes), technical (API, service, state, events, failure, caching, logging where relevant), metrics (success metric, guardrails, instrumentation), tradeoffs. Flag in notes if it sounded like a recited framework.\nFor probes, write 3 follow-up questions an interviewer would ask next, chosen from gaps in this answer, preferring these technical probes where relevant: "+TECH_Q.join("; ")+"\nReply with only JSON: {\"scores\":{\"empathy\":n,\"structure\":n,\"prioritization\":n,\"depth\":n,\"technical\":n,\"metrics\":n,\"tradeoffs\":n},\"strongest\":\"one sentence\",\"weakest\":\"one sentence\",\"notes\":\"2-4 sentences\",\"probes\":[\"...\",\"...\",\"...\"]}","default");
+    const sc={};DIMS.forEach(d=>{sc[d[0]]=Math.max(1,Math.min(5,Math.round(+(r.scores||{})[d[0]]||1)))});
+    c.result={scores:sc,strongest:String(r.strongest||""),weakest:String(r.weakest||""),notes:String(r.notes||""),probes:(r.probes||[]).slice(0,3).map(String)};
+    S.cases.push({ts:Date.now(),type:c.type,question:c.question,answer:c.answer.slice(0,6000),scores:sc,weakest:c.result.weakest});
+    log("case",c.type+" case, mean "+dimMean(sc).toFixed(1),["empathy","structure","depth","rehearsed"]);
+    c.status="done";
+  }catch(e){c.status="answering";c.err=errCopy(e)}
+  render();
+}
+async function askDrill(kind,id){
+  const item=kind==="skill"?SKILLS.find(s=>s[0]===id):PROJECTS.find(p=>p.id===id);
+  const name=kind==="skill"?item[1]:item.name,ctx=kind==="skill"?item[2]:item.scope;
+  ui.drill={kind,id,status:"asking",question:"",answer:"",result:null,err:"",name,ctx};render();
+  try{
+    const r=await askJson("You are a technical interviewer testing a product manager's technical depth. The candidate is building their own independent app"+((S.app.problem||{}).problem?" that solves this problem: "+S.app.problem.problem:"")+".\nTopic: "+(kind==="skill"?"the concept '"+name+"' as it applies to their app ("+ctx+")":"the candidate's own project '"+name+"' ("+ctx+")")+".\nWrite ONE follow-up question that needs a concrete mechanism-level answer (what is called, where state lives, what fails, how retries or caching work), not a definition. No hints, no answer. Probe angles to choose from: "+TECH_Q.join("; ")+".\nReply with only JSON: {\"question\":\"...\"}","quick");
+    ui.drill.question=String(r.question||"");ui.drill.status=ui.drill.question?"answering":"done";if(!ui.drill.question)ui.drill.err="No question came back. Try again.";
+  }catch(e){ui.drill.status="done";ui.drill.err=errCopy(e)}
+  render();
+}
+async function gradeDrill(){
+  const d=ui.drill;if((d.answer||"").trim().length<30){d.err="Write a fuller answer before submitting.";render();return}
+  d.status="grading";d.err="";render();
+  try{
+    const r=await askJson("You are a strict technical interviewer grading a product manager. Topic: "+d.name+". Question: "+d.question+"\nAnswer:\n"+d.answer.slice(0,5000)+"\n\nPass only if the answer is correct, concrete (names the mechanism, state location, failure handling where relevant) and would satisfy a backend engineer. Vague or definition-only answers do not pass.\nReply with only JSON: {\"pass\":true|false,\"feedback\":\"2-3 sentences\",\"gaps\":[\"specific missing point\", ...]}","default");
+    d.result={pass:r.pass===true,feedback:String(r.feedback||""),gaps:(r.gaps||[]).slice(0,4).map(String)};
+    if(d.result.pass){
+      if(d.kind==="skill"){const st=S.skills[d.id]||(S.skills[d.id]={stage:0,passes:[],built:""});st.passes=(st.passes||[]).concat([{ts:Date.now(),q:d.question}])}
+      else{const st=S.projects[d.id]||(S.projects[d.id]={items:{},passes:[]});st.passes=(st.passes||[]).concat([{ts:Date.now(),q:d.question}])}
+      log("drill","Passed follow-up on "+d.name+": "+d.question,d.kind==="skill"?["tech"]:["building"]);
+    }
+    d.status="done";
+  }catch(e){d.status="answering";d.err=errCopy(e)}
+  render();
+}
+async function suggestQ(){
+  const m=ui.mentor;const el=document.getElementById("mq");el.placeholder="Thinking…";
+  try{
+    const r=await askJson("Write ONE narrow, specific question a PM trainee should ask their mentor, based on this update. It must name a concrete artifact or reasoning step and ask where it is shallow or wrong (example style: 'I mapped referral attribution like this. Where is my technical reasoning still shallow?'). Not 'am I improving?'.\n\nLearned:\n"+m.learned+"\nBuilt:\n"+m.built+"\nImproved:\n"+m.improved+"\nStill weak:\n"+m.weak+"\nReply with only JSON: {\"question\":\"...\"}","quick");
+    m.question=String(r.question||"");
+  }catch(e){ui.msg=errCopy(e)}
+  render();
+}
+
+route();
+boot();
+})();
+</script>
